@@ -1,0 +1,85 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- Model untuk Produk dan Kategori ---
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[] // Sebuah kategori bisa memiliki banyak produk
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  name        String
+  description String    @db.Text
+  price       Int
+  imageUrl    String
+  stock       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  orderItems OrderItem[] // Sebuah produk bisa ada di banyak item pesanan
+}
+
+// --- Model untuk Pengguna (Admin & Customer) ---
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      UserRole @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  orders    Order[] // Seorang pengguna bisa memiliki banyak pesanan
+}
+
+// --- Model untuk Pesanan (Order) ---
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  totalAmount   Int
+  status        OrderStatus @default(PENDING)
+  shippingAddress String    @db.Text
+  createdAt     DateTime    @default(now())
+
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+
+  items OrderItem[] // Sebuah pesanan memiliki banyak item
+}
+
+model OrderItem {
+  id       String @id @default(cuid())
+  quantity Int
+
+  order    Order  @relation(fields: [orderId], references: [id])
+  orderId  String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  // Pastikan setiap produk hanya muncul sekali per pesanan
+  @@unique([orderId, productId])
+}

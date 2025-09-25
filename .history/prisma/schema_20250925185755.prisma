@@ -1,0 +1,99 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Pola Penamaan:
+// Tabel: m (Master), tr (Transaksi)
+// Kolom: uid (ID), txt (Teks), int (Integer), dt (DateTime), enum (Enum)
+
+// --- Model untuk Produk dan Kategori ---
+model Category {
+  id       String    @id @default(cuid()) @map("uidCategoryId")
+  name     String    @unique @map("txtCategoryName")
+
+  products Product[]
+
+  @@map("mCategory") // Tabel Master Kategori
+}
+
+model Product {
+  id          String    @id @default(cuid()) @map("uidProductId")
+  name        String    @map("txtProductName")
+  description String    @db.Text @map("txtProductDescription")
+  price       Int       @map("intPrice")
+  imageUrl    String    @map("txtImageUrl")
+  stock       Int       @default(0) @map("intStock")
+  createdAt   DateTime  @default(now()) @map("dtCreatedAt")
+  updatedAt   DateTime  @updatedAt @map("dtUpdatedAt")
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String   @map("uidCategoryId")
+  
+  orderItems OrderItem[]
+
+  @@map("mProduct") // Tabel Master Produk
+}
+
+// --- Model untuk Pengguna (Admin & Customer) ---
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+model User {
+  id        String   @id @default(cuid()) @map("uidUserId")
+  name      String?  @map("txtUserName")
+  email     String   @unique @map("txtEmail")
+  password  String   @map("txtPassword")
+  role      UserRole @default(CUSTOMER) @map("enumRole")
+  createdAt DateTime @default(now()) @map("dtCreatedAt")
+  
+  orders    Order[]
+
+  @@map("mUser") // Tabel Master Pengguna
+}
+
+// --- Model untuk Pesanan (Order) ---
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id            String      @id @default(cuid()) @map("uidOrderId")
+  totalAmount   Int         @map("intTotalAmount")
+  status        OrderStatus @default(PENDING) @map("enumStatus")
+  shippingAddress String    @db.Text @map("txtShippingAddress")
+  createdAt     DateTime    @default(now()) @map("dtCreatedAt")
+
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String @map("uidUserId")
+
+  items OrderItem[]
+
+  @@map("trOrder") // Tabel Transaksi Pesanan
+}
+
+model OrderItem {
+  id       String @id @default(cuid()) @map("uidOrderItemId")
+  quantity Int    @map("intQuantity")
+
+  order    Order  @relation(fields: [orderId], references: [id])
+  orderId  String @map("uidOrderId")
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @map("uidProductId")
+
+  @@unique([orderId, productId])
+  @@map("trOrderItem") // Tabel Transaksi Item Pesanan
+}
