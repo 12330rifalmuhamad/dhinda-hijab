@@ -2,20 +2,11 @@
 "use client";
 
 import Image from 'next/image';
+import Link from 'next/link'; // <-- 1. Import Link
 import { motion } from 'framer-motion';
-import { ShoppingBag } from 'lucide-react';
-import Link from 'next/link'; 
-
 
 export default function ProductCard({ product, index }) {
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, delay: index * 0.1 },
-    },
-  };
+  const cardVariants = { /* ... */ };
 
   return (
     // 2. Bungkus semua dengan Link, arahkan ke halaman detail produk

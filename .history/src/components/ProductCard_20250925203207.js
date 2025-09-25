@@ -4,8 +4,6 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
-import Link from 'next/link'; 
-
 
 export default function ProductCard({ product, index }) {
   const cardVariants = {

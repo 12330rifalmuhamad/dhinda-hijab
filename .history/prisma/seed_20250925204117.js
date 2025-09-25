@@ -28,13 +28,37 @@ async function main() {
 
 await prisma.product.createMany({
     data: [
-      { name: 'Pashmina Silk Premium', description: 'Pashmina mewah dengan bahan silk yang lembut dan jatuh.', price: 75000, imageUrl: '/img/product-1.png', stock: 100, categoryId: pashmina.id },
-      { name: 'Bergo Maryam Diamond', description: 'Bergo praktis dengan bahan diamond crepe yang nyaman dipakai sehari-hari.', price: 55000, imageUrl: '/img/product-2.png', stock: 150, categoryId: bergo.id },
+        {
+            name: 'Pashmina Silk Premium',
+            description: 'Pashmina dengan bahan silk premium yang memberikan kesan mewah dan elegan. Nyaman dipakai seharian.',
+            price: 75000,
+            categoryId: pashminaCategory.id,
+            images: {
+              create: [ 
+                { url: '/img/product-1.png', order: 1 },
+                { url: '/img/product-1b.png', order: 2 }, // Contoh gambar kedua
+                { url: '/img/product-1c.png', order: 3 }, // Contoh gambar ketiga
+              ]
+            }
+          },
+          {
+            name: 'Bergo Maryam Diamond',
+            description: 'Bergo instan dengan aksen diamond yang cantik, praktis dan cocok untuk gaya kasual maupun formal.',
+            price: 55000,
+            categoryId: bergoCategory.id,
+            images: {
+              create: [ 
+                { url: '/img/product-2.png', order: 1 },
+                { url: '/img/product-2b.png', order: 2 },
+              ]
+            }
+        },
       { name: 'Square Voal Motif', description: 'Hijab segiempat dengan motif eksklusif dan bahan voal premium yang mudah dibentuk.', price: 60000, imageUrl: '/img/product-3.png', stock: 120, categoryId: square.id },
       { name: 'Instant Jersey Hijab', description: 'Hijab instan sporty bahan jersey yang adem dan menyerap keringat.', price: 85000, imageUrl: '/img/product-4.png', stock: 80, categoryId: bergo.id },
     ]
-  });
+    skipDuplicates: true, // Jika Anda menjalankan seed berulang kali
 
+  });
 
   console.log('Products created.');
   console.log('Seeding finished.');
