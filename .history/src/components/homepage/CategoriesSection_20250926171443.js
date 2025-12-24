@@ -28,19 +28,27 @@ export default function CategoriesSection() {
   return (
     <section id="categories" className="bg-white py-20">
       <div className="container mx-auto px-4 sm:px-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center">
+        <motion.div /* ... */ className="text-center">
           <h2 className="text-4xl font-bold text-gray-900">Jelajahi Koleksi Kami</h2>
           <p className="mt-2 text-gray-500">Temukan gaya yang paling sesuai dengan kepribadian Anda.</p>
         </motion.div>
-        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
+        
+        <motion.div 
+          className="flex lg:grid lg:grid-cols-4 gap-6 mt-12 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {isLoading ? (
-            Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="bg-gray-100 rounded-lg h-96 animate-pulse"></div>
-            ))
+            /* ... placeholder ... */
           ) : (
+            // PASTIKAN BAGIAN INI BENAR
             categories.map((category, index) => (
-              // Pastikan CategoryCard Anda menerima prop href dari data.href
-              <CategoryCard key={category.id} category={{...category, href: `/collections/${category.name.toLowerCase()}`}} index={index} />
+              <CategoryCard 
+                key={category.id} // Gunakan ID unik dari database
+                category={category} // <-- Meneruskan seluruh objek 'category'
+                index={index} 
+              />
             ))
           )}
         </motion.div>
