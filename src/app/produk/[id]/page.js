@@ -6,7 +6,7 @@ import ProductView from '@/components/ProductView';
 
 // Halaman ini sekarang adalah async Server Component
 export default async function ProductDetailPage({ params }) {
-  const { id } = params; // Ambil ID dari params
+  const { id } = await params; // Ambil ID dari params
 
   // Kita letakkan logika getProduct langsung di sini untuk kejelasan
   const product = await prisma.product.findUnique({

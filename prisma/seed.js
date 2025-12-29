@@ -29,7 +29,7 @@ async function main() {
       price: 75000,
       stock: 120,
       categoryId: pashmina.id,
-      images: ['/img/product-1.png', '/img/product-1b.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Pashmina Crinkle Airflow',
@@ -37,7 +37,7 @@ async function main() {
       price: 58000,
       stock: 200,
       categoryId: pashmina.id,
-      images: ['/img/product-5.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Pashmina Plisket Full',
@@ -45,7 +45,7 @@ async function main() {
       price: 65000,
       stock: 150,
       categoryId: pashmina.id,
-      images: ['/img/product-6.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Pashmina Inner 2-in-1',
@@ -53,7 +53,7 @@ async function main() {
       price: 89000,
       stock: 80,
       categoryId: pashmina.id,
-      images: ['/img/product-7.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Pashmina Ceruty Baby Doll',
@@ -61,7 +61,7 @@ async function main() {
       price: 49000,
       stock: 300,
       categoryId: pashmina.id,
-      images: ['/img/product-8.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     // Bergo (5)
     {
@@ -70,7 +70,7 @@ async function main() {
       price: 55000,
       stock: 180,
       categoryId: bergo.id,
-      images: ['/img/product-2.png', '/img/product-2b.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Bergo Hamidah Jersey',
@@ -78,7 +78,7 @@ async function main() {
       price: 62000,
       stock: 250,
       categoryId: bergo.id,
-      images: ['/img/product-9.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Bergo Plisket Tali',
@@ -86,7 +86,7 @@ async function main() {
       price: 68000,
       stock: 110,
       categoryId: bergo.id,
-      images: ['/img/product-10.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Bergo Sporty Pendek',
@@ -94,7 +94,7 @@ async function main() {
       price: 45000,
       stock: 130,
       categoryId: bergo.id,
-      images: ['/img/product-11.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Bergo Syar\'i Jumbo',
@@ -102,7 +102,7 @@ async function main() {
       price: 95000,
       stock: 70,
       categoryId: bergo.id,
-      images: ['/img/product-12.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     // Square (5)
     {
@@ -111,7 +111,7 @@ async function main() {
       price: 60000,
       stock: 160,
       categoryId: square.id,
-      images: ['/img/product-3.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Paris Premium Jahit Tepi',
@@ -119,7 +119,7 @@ async function main() {
       price: 35000,
       stock: 400,
       categoryId: square.id,
-      images: ['/img/product-13.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Bella Square Polycotton',
@@ -127,7 +127,7 @@ async function main() {
       price: 25000,
       stock: 500,
       categoryId: square.id,
-      images: ['/img/product-14.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Corn Skin Square',
@@ -135,7 +135,7 @@ async function main() {
       price: 40000,
       stock: 180,
       categoryId: square.id,
-      images: ['/img/product-15.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Satin Silk Square',
@@ -143,7 +143,7 @@ async function main() {
       price: 55000,
       stock: 90,
       categoryId: square.id,
-      images: ['/img/product-16.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     // Instant (5)
     {
@@ -152,7 +152,7 @@ async function main() {
       price: 85000,
       stock: 100,
       categoryId: instant.id,
-      images: ['/img/product-4.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Turban Instan Spandex',
@@ -160,7 +160,7 @@ async function main() {
       price: 50000,
       stock: 75,
       categoryId: instant.id,
-      images: ['/img/product-17.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Khimar Instan Ceruty',
@@ -168,7 +168,7 @@ async function main() {
       price: 110000,
       stock: 60,
       categoryId: instant.id,
-      images: ['/img/product-18.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Hijab Instan Hoodie',
@@ -176,7 +176,7 @@ async function main() {
       price: 78000,
       stock: 85,
       categoryId: instant.id,
-      images: ['/img/product-19.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
     {
       name: 'Inner Ninja Resleting',
@@ -184,7 +184,7 @@ async function main() {
       price: 30000,
       stock: 200,
       categoryId: instant.id,
-      images: ['/img/product-20.png']
+      images: ['https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg']
     },
   ];
 

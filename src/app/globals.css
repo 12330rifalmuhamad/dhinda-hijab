@@ -3,35 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --background: #fdf2f8;
-  --foreground: #831843;
-  --primary: #f472b6;
-  --secondary: #ec4899;
-  --accent: #f9a8d4;
-  --muted: #fce7f3;
+  --background: #fffafa; /* Snow/Floral White - clearer than pink-50 */
+  --foreground: #4a4042; /* Warm Charcoal/Brown - softer than black */
+  --primary: #dca5ad; /* Dusty Pink (matching Navbar) */
+  --secondary: #c48b94; /* Darker Dusty Pink for hover */
+  --accent: #f4e4e6; /* Very light pink for backgrounds */
+  --muted: #f3f4f6;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
-  --color-muted: var(--muted);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1f0f1a;
-    --foreground: #fce7f3;
-    --primary: #f472b6;
-    --secondary: #ec4899;
-    --accent: #f9a8d4;
-    --muted: #2d1b2e;
-  }
-}
 
 * {
   box-sizing: border-box;
@@ -48,8 +28,13 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-lato), system-ui, -apple-system, sans-serif;
   line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), serif;
+  font-weight: 700;
 }
 
 /* Custom scrollbar */
@@ -96,7 +81,8 @@ body {
 
 /* Smooth transitions */
 * {
-  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 /* Focus styles */
@@ -110,4 +96,3 @@ body {
   background-color: var(--accent);
   color: var(--foreground);
 }
-

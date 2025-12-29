@@ -8,9 +8,9 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/pagination';
 
 const sliderData = [
-  { id: 1, imageUrl: '/img/pashmina-cat.png', title: 'Koleksi Pashmina', subtitle: 'Kelembutan Sutra, senyaman sentuhan.'},
-  { id: 2, imageUrl: '/img/product-1b.png', title: 'Bergo Praktis', subtitle: 'Kenyamanan dan Gaya untuk setiap aktivitas.'},
-  { id: 3, imageUrl: '/img/square-cat.png', title: 'Hijab Motif Terbaru', subtitle: 'Ekspresikan dirimu dengan motif eksklusif.'},
+  { id: 1, imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample.jpg', title: 'Koleksi Pashmina', subtitle: 'Kelembutan Sutra, senyaman sentuhan.'},
+  { id: 2, imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-2.jpg', title: 'Bergo Praktis', subtitle: 'Kenyamanan dan Gaya untuk setiap aktivitas.'},
+  { id: 3, imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-3.jpg', title: 'Hijab Motif Terbaru', subtitle: 'Ekspresikan dirimu dengan motif eksklusif.'},
 ];
 
 export default function HeroSlider() {

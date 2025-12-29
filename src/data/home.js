@@ -16,7 +16,7 @@ export const mostWantedProducts = [
     id: '1', 
     name: 'Pashmina Silk Premium', 
     price: 75000, 
-    imageUrl: '/img/product-1.png',
+    imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample.jpg',
     rating: 4.9,
     sold: 1200
   },
@@ -24,7 +24,7 @@ export const mostWantedProducts = [
     id: '2', 
     name: 'Bergo Maryam Diamond', 
     price: 55000, 
-    imageUrl: '/img/product-2.png',
+    imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-2.jpg',
     rating: 4.8,
     sold: 980
   },
@@ -32,7 +32,7 @@ export const mostWantedProducts = [
     id: '3', 
     name: 'Square Voal Motif', 
     price: 60000, 
-    imageUrl: '/img/product-3.png',
+    imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-3.jpg',
     rating: 4.7,
     sold: 850
   },
@@ -40,7 +40,7 @@ export const mostWantedProducts = [
     id: '4', 
     name: 'Instant Jersey Hijab', 
     price: 85000, 
-    imageUrl: '/img/product-4.png',
+    imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-4.jpg',
     rating: 4.9,
     sold: 1500
   },
@@ -49,21 +49,21 @@ export const mostWantedProducts = [
 export const categories = [
   { 
     name: 'Pashmina', 
-    imageUrl: '/img/pashmina-cat.png', 
+    imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample.jpg', 
     href: '/collections/pashmina',
     description: 'Elegant & Luxurious',
     productCount: 45
   },
   { 
     name: 'Bergo', 
-    imageUrl: '/img/bergo-cat.png', 
+    imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-2.jpg', 
     href: '/collections/bergo',
     description: 'Comfortable & Stylish',
     productCount: 32
   },
   { 
     name: 'Square', 
-    imageUrl: '/img/square-cat.png', 
+    imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-3.jpg', 
     href: '/collections/square',
     description: 'Versatile & Modern',
     productCount: 28
@@ -134,7 +134,7 @@ export const testimonials = [
     location: 'Jakarta',
     rating: 5,
     comment: 'Kualitas hijab Dhinda sangat memuaskan! Bahan lembut dan tidak mudah kusut. Pelayanan customer service juga sangat responsif.',
-    image: '/img/testimonial-1.jpg'
+    image: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-5.jpg'
   },
   {
     id: 2,
@@ -142,7 +142,7 @@ export const testimonials = [
     location: 'Bandung',
     rating: 5,
     comment: 'Desainnya sangat trendy dan nyaman dipakai. Sudah belanja beberapa kali dan selalu puas dengan hasilnya.',
-    image: '/img/testimonial-2.jpg'
+    image: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-4.jpg'
   },
   {
     id: 3,
@@ -150,7 +150,7 @@ export const testimonials = [
     location: 'Surabaya',
     rating: 5,
     comment: 'Pengiriman cepat dan packaging rapi. Produk sesuai dengan yang di foto. Highly recommended!',
-    image: '/img/testimonial-3.jpg'
+    image: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample.jpg'
   }
 ];
 

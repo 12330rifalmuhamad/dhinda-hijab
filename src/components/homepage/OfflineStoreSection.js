@@ -7,17 +7,18 @@ import { storeLocations } from '@/data/home'; // Impor data statis
 
 export default function OfflineStoreSection() {
   return (
-    <section id="offline-store" className="bg-gray-50 py-20">
+    <section id="offline-store" className="bg-[#fffbfa] py-24">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           whileInView={{ opacity: 1, y: 0 }} 
           viewport={{ once: true }} 
           transition={{ duration: 0.5 }} 
-          className="text-center"
+          className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900">Kunjungi Toko Offline Kami</h2>
-          <p className="mt-2 text-gray-500 max-w-2xl mx-auto">Rasakan langsung kualitas premium dari koleksi kami.</p>
+          <span className="text-sm font-medium text-[#dca5ad] uppercase tracking-[0.2em] mb-3 block">Offline Stores</span>
+          <h2 className="text-3xl md:text-4xl font-serif text-[#4a4042] mb-4">Visit Our Boutiques</h2>
+          <p className="text-gray-500 max-w-2xl mx-auto font-light">Experience the premium quality of our collections in person.</p>
         </motion.div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-16 items-center">
           <motion.div 

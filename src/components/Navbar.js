@@ -1,124 +1,146 @@
 "use client";
-import Link from 'next/link';
-import Image from 'next/image';
-import { Search, User, ShoppingBag, Menu, X } from 'lucide-react';
-import { useCart } from '@/context/cartContext';
-import { useState } from 'react';
+import Link from "next/link";
+import Image from "next/image";
+import { Search, User, ShoppingBag, Menu, X } from "lucide-react";
+import { useCart } from "@/context/cartContext";
+import { useState, useEffect } from "react";
+import { usePathname } from 'next/navigation';
 
-export default function Navbar() {
+import CustomerLoginModal from "./CustomerLoginModal";
+
+export default function Navbar({ categories = [] }) {
+  const pathname = usePathname();
   const { getTotalItems } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/auth/customer/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) setUser(data.user);
+      })
+      .catch(err => console.error(err));
+  }, []);
+
   const totalItems = getTotalItems();
+
+  // Hide Navbar on admin pages
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const navLinks = categories.length > 0 
+    ? categories.map(cat => ({
+        name: cat.name.toUpperCase(),
+        href: `/collections/${cat.name.toLowerCase().replace(/\s+/g, '-')}` 
+      }))
+    : [
+      // Fallback if no categories found (optional, or keep empty)
+      { name: "ALL PRODUCTS", href: "/collections/all" },
+    ];
+
   return (
-    <header className="w-full bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-soft-pink-200 shadow-sm">
-      <div className="container mx-auto px-4 sm:px-6 py-4">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
-          <Link href="/" className="flex-shrink-0">
-            <Image 
-              src="/img/logo.png" 
-              alt="Dhinda Hijab Logo" 
-              width={140} 
-              height={40} 
-              className="h-10 w-auto hover:scale-105 transition-transform duration-200" 
-              priority 
-            />
-          </Link>
+    <>
+       {/* Placeholder to prevent layout shift */}
+       <div className="h-[120px] w-full block"></div>
+       
+       <CustomerLoginModal 
+         isOpen={isLoginOpen} 
+         onClose={() => setIsLoginOpen(false)} 
+         onLoginSuccess={(u) => setUser(u)}
+       />
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-x-8">
-            <Link 
-              href="/collections/pashmina" 
-              className="text-soft-pink-700 hover:text-brand-primary font-medium transition-colors duration-200 relative group"
-            >
-              Pashmina
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-primary transition-all duration-200 group-hover:w-full"></span>
-            </Link>
-            <Link 
-              href="/collections/bergo" 
-              className="text-soft-pink-700 hover:text-brand-primary font-medium transition-colors duration-200 relative group"
-            >
-              Bergo
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-primary transition-all duration-200 group-hover:w-full"></span>
-            </Link>
-            <Link 
-              href="/collections/square" 
-              className="text-soft-pink-700 hover:text-brand-primary font-medium transition-colors duration-200 relative group"
-            >
-              Square
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-primary transition-all duration-200 group-hover:w-full"></span>
-            </Link>
-          </nav>
+    <header className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex flex-col">
+          {/* Main Header Row: Logo & Icons */}
+          <div className="flex justify-between items-center py-4 relative">
+            {/* Mobile Menu Button (Left) */}
+            <div className="flex-1 flex justify-start">
+                <button
+                  onClick={toggleMobileMenu}
+                  className="lg:hidden p-2 text-[#4a4042] hover:text-[#dca5ad] transition-colors"
+                >
+                  {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+            </div>
 
-          {/* Right side icons */}
-          <div className="flex items-center gap-x-4">
-            {/* Search Icon */}
-            <button className="p-2 text-soft-pink-700 hover:text-brand-primary hover:bg-soft-pink-50 rounded-full transition-all duration-200">
-              <Search size={20} />
-            </button>
-
-            {/* User Icon */}
-            <button className="p-2 text-soft-pink-700 hover:text-brand-primary hover:bg-soft-pink-50 rounded-full transition-all duration-200">
-              <User size={20} />
-            </button>
-
-            {/* Cart Icon */}
-            <Link 
-              href="/keranjang" 
-              className="relative p-2 text-soft-pink-700 hover:text-brand-primary hover:bg-soft-pink-50 rounded-full transition-all duration-200"
-            >
-              <ShoppingBag size={20} />
-              {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-brand-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-semibold animate-bounce-gentle">
-                  {totalItems}
+            {/* Logo (Center) */}
+            <div className="flex-1 flex justify-center py-2">
+              <Link href="/" className="flex flex-col items-center">
+                <span className="text-2xl md:text-3xl font-serif tracking-[0.15em] text-[#4a4042] whitespace-nowrap">
+                  DHINDA HIJAB
                 </span>
-              )}
-            </Link>
+                <span className="hidden md:block text-[10px] tracking-[0.4em] text-[#dca5ad] font-medium mt-1 uppercase">
+                  Modern Muslim Wear
+                </span>
+              </Link>
+            </div>
 
-            {/* Mobile Menu Button */}
-            <button 
-              onClick={toggleMobileMenu}
-              className="lg:hidden p-2 text-soft-pink-700 hover:text-brand-primary hover:bg-soft-pink-50 rounded-full transition-all duration-200"
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            {/* Right Icons */}
+            <div className="flex-1 flex justify-end items-center gap-x-2 md:gap-x-4">
+              <button 
+                onClick={() => setIsLoginOpen(true)}
+                className="p-2 text-[#4a4042] hover:text-[#dca5ad] transition-colors flex items-center gap-2"
+              >
+                <User size={20} strokeWidth={1.5} />
+                {user && <span className="hidden md:inline text-xs font-medium uppercase tracking-wider">{user.name?.split(' ')[0]}</span>}
+              </button>
+              <button className="p-2 text-[#4a4042] hover:text-[#dca5ad] transition-colors relative">
+                <ShoppingBag size={20} strokeWidth={1.5} />
+                {true && ( // Always show for demo or use real count
+                    <span className="absolute -top-0.5 -right-0.5 bg-[#dca5ad] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                        {totalItems}
+                    </span>
+                )}
+              </button>
+            </div>
           </div>
+
+          {/* Navigation Links (Desktop) */}
+          <nav className="hidden lg:flex justify-center items-center py-3 border-t border-gray-100">
+            <ul className="flex flex-wrap justify-center gap-x-8">
+              {navLinks.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-[11px] font-bold tracking-[0.15em] text-[#4a4042] hover:text-[#dca5ad] transition-colors uppercase relative group"
+                  >
+                    {link.name}
+                    <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#dca5ad] transition-all duration-300 group-hover:w-full"></span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-4 py-4 border-t border-soft-pink-200 animate-slide-up">
-            <nav className="flex flex-col space-y-4">
-              <Link 
-                href="/collections/pashmina" 
-                className="text-soft-pink-700 hover:text-brand-primary font-medium py-2 px-4 hover:bg-soft-pink-50 rounded-lg transition-all duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Pashmina
-              </Link>
-              <Link 
-                href="/collections/bergo" 
-                className="text-soft-pink-700 hover:text-brand-primary font-medium py-2 px-4 hover:bg-soft-pink-50 rounded-lg transition-all duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Bergo
-              </Link>
-              <Link 
-                href="/collections/square" 
-                className="text-soft-pink-700 hover:text-brand-primary font-medium py-2 px-4 hover:bg-soft-pink-50 rounded-lg transition-all duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Square
-              </Link>
+          <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-lg animate-slide-up z-50 h-screen">
+            <nav className="flex flex-col p-6 space-y-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="text-[#4a4042] hover:text-[#dca5ad] font-medium text-lg py-2 border-b border-gray-50 tracking-wide flex justify-between items-center group"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.name}
+                  <span className="text-[#dca5ad] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                </Link>
+              ))}
             </nav>
           </div>
         )}
       </div>
     </header>
+    </>
   );
 }

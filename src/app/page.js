@@ -1,59 +1,117 @@
+
 import prisma from '@/lib/prisma';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import HeroSlider from '@/components/HeroSlider';
+import HeroSection from '@/components/HeroSection';
 import MostWantedSection from '@/components/homepage/MostWantedSection';
 import CategoriesSection from '@/components/homepage/CategoriesSection';
-import FeaturesSection from '@/components/homepage/FeaturesSection';
 import OfflineStoreSection from '@/components/homepage/OfflineStoreSection';
+import ShopTheLookSection from '@/components/homepage/ShopTheLookSection';
+import ArticlesSection from '@/components/homepage/ArticlesSection'; // Updated import
+import FloatingButtons from '@/components/FloatingButtons';
 
-// Fungsi untuk mengambil data produk di server
+// Helper functions for data fetching
+async function getArticles() {
+  try {
+     return await prisma.article.findMany({
+        take: 3,
+        orderBy: { createdAt: 'desc' }
+     });
+  } catch (error) {
+     console.error("Gagal mengambil artikel:", error);
+     return [];
+  }
+}
+async function getSections() {
+  try {
+    return await prisma.homeSection.findMany({
+      where: { isActive: true },
+      orderBy: { order: 'asc' },
+    });
+  } catch (error) {
+    console.error("Gagal mengambil sections:", error);
+    return [];
+  }
+}
+
 async function getProducts() {
   try {
-    const products = await prisma.product.findMany({
-      take: 4, // Ambil 4 produk terbaru
+    // Basic product fetch - adjust 'take' based on requirements or user settings later
+    return await prisma.product.findMany({
+      take: 8,
       orderBy: { createdAt: 'desc' },
-      include: {
-        images: { take: 1, orderBy: { createdAt: 'asc' } },
-      },
+      include: { images: true }
     });
-    return products;
   } catch (error) {
     console.error("Gagal mengambil produk:", error);
-    return []; // Kembalikan array kosong jika error
+    return [];
   }
 }
 
-// Fungsi untuk mengambil data kategori di server
 async function getCategories() {
   try {
-    const categories = await prisma.category.findMany({
-      orderBy: { name: 'asc' },
+    return await prisma.category.findMany({
+      orderBy: { name: 'asc' }
     });
-    return categories;
   } catch (error) {
     console.error("Gagal mengambil kategori:", error);
-    return []; // Kembalikan array kosong jika error
+    return [];
   }
 }
 
-// Halaman utama adalah async Server Component
 export default async function HomePage() {
-  // Panggil kedua fungsi secara bersamaan untuk efisiensi
-  const [products, categories] = await Promise.all([
+  const [products, categories, sections, articles] = await Promise.all([
     getProducts(),
     getCategories(),
+    getSections(),
+    getArticles()
   ]);
 
+  // If no sections defined, fallback to default layout
+  if (sections.length === 0) {
+     return (
+        <main className="relative">
+           <HeroSection />
+           <MostWantedSection products={products} />
+           <CategoriesSection categories={categories} />
+           <CategoriesSection categories={categories} />
+           <OfflineStoreSection />
+           <ArticlesSection articles={articles} />
+           <FloatingButtons />
+        </main>
+     );
+  }
+
   return (
-    // Navbar dan Footer sudah ada di layout.js, jadi tidak perlu di sini
-    <main>
-      <HeroSlider />
-      {/* Kirim data sebagai props ke komponen */}
-      <MostWantedSection products={products} />
-      <FeaturesSection />
-      <CategoriesSection categories={categories} />
-      <OfflineStoreSection />
+    <main className="relative">
+      {sections.map(section => {
+        switch(section.type) {
+           case 'HERO':
+              return <HeroSection key={section.id} />;
+           case 'PRODUCT_SLIDER':
+              return <MostWantedSection key={section.id} products={products} limit={section.content?.limit} title={section.content?.title} />;
+           case 'CATEGORY_GRID':
+              return <CategoriesSection key={section.id} categories={categories} title={section.content?.title} />;
+           case 'OFFLINE_STORE':
+              return <OfflineStoreSection key={section.id} />;
+           case 'BANNER':
+              return (
+                 <div key={section.id} className="w-full relative aspect-[21/9] mb-12">
+                     {/* Basic banner implementation - improve as needed */}
+                     <div 
+                        className="w-full h-full bg-center bg-cover"
+                        style={{ backgroundImage: `url(${section.content?.imageUrl})` }}
+                     />
+                 </div>
+              );
+            case 'SHOP_THE_LOOK':
+              return <ShopTheLookSection key={section.id} section={section} />;
+            case 'STORIES':
+            case 'ARTICLES': // Support both types for future proofing
+              return <ArticlesSection key={section.id} articles={articles} title={section.title} />;
+           default:
+              return null;
+        }
+      })}
+      <FloatingButtons />
     </main>
   );
 }

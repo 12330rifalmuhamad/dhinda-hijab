@@ -34,13 +34,13 @@ export default function CategoryCard({ category, index }) {
         
         {/* Content */}
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white text-center">
-          <h3 className="text-2xl font-bold tracking-wider uppercase">
+          <h3 className="text-2xl font-serif font-medium tracking-wide">
             {category.name}
           </h3>
           <div 
-            className="mt-4 max-w-max mx-auto px-6 py-2 border-2 border-white/50 rounded-full text-sm font-semibold uppercase tracking-widest transition-all duration-300 group-hover:bg-white group-hover:text-black flex items-center gap-2"
+            className="mt-6 inline-flex items-center gap-2 px-6 py-2 bg-white/10 backdrop-blur-sm border border-white/30 rounded-full text-sm font-medium hover:bg-white hover:text-[#dca5ad] transition-all duration-300"
           >
-            Lihat Koleksi
+            Shop Collection
             <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
           </div>
         </div>

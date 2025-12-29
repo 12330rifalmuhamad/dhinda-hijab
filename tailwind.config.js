@@ -42,7 +42,9 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-lato)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-playfair)', 'serif'],
+        display: ['var(--font-playfair)', 'serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

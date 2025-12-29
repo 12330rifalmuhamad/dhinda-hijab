@@ -1,0 +1,63 @@
+"use client";
+import { useState } from 'react';
+import { MessageCircle, Gift } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import CustomerLoginModal from './CustomerLoginModal';
+
+export default function FloatingButtons() {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+  return (
+    <>
+      <CustomerLoginModal 
+        isOpen={isLoginOpen} 
+        onClose={() => setIsLoginOpen(false)} 
+        initialIsRegistering={true}
+      />
+
+      {/* Gift/Reward Button (Bottom Left) */}
+      <div className="fixed bottom-6 left-6 z-40 flex items-center group">
+        <motion.button
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 1, type: "spring" }}
+          onClick={() => setIsLoginOpen(true)}
+          className="bg-[#eebec6] p-3 rounded-full shadow-lg text-white hover:bg-[#dca5ad] transition-colors relative"
+        >
+          <Gift size={28} />
+          <span className="absolute -top-1 -right-1 flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+          </span>
+        </motion.button>
+        
+        {/* Tooltip Label */}
+        <motion.div 
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.5 }}
+          className="ml-3 bg-white px-4 py-2 rounded-lg shadow-md border border-[#ffe4e6] text-[#4a4042] font-medium text-sm whitespace-nowrap hidden md:block"
+        >
+          Klaim Voucher
+          <div className="absolute left-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-l border-b border-[#ffe4e6] rotate-45 transform"></div>
+        </motion.div>
+      </div>
+
+      {/* Chat Button (Bottom Right) */}
+      <motion.button
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 1.2, type: "spring" }}
+        className="fixed bottom-6 right-6 z-40 bg-[#dca5ad] p-3 pl-4 pr-4 rounded-full shadow-lg text-white hover:bg-[#eebec6] transition-colors flex items-center gap-2 group"
+      >
+        <MessageCircle size={28} />
+        <span className="font-medium text-lg">Chat</span>
+        
+        {/* Notification Badge */}
+        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold border-2 border-white">
+          1
+        </span>
+      </motion.button>
+    </>
+  );
+}

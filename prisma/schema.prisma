@@ -10,6 +10,7 @@ datasource db {
 model Category {
   id        String    @id @default(cuid())
   name      String    @unique
+  imageUrl  String?   // Banner image for the category
   products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -21,6 +22,9 @@ model Product {
   description String?
   price       Int
   stock       Int            @default(0)
+  shopeeUrl   String?        // Link to Shopee product
+  tiktokUrl   String?        // Link to TikTok Shop product
+  material    String?        // Product material (e.g. Katun Bordir)
   images      ProductImage[]
   categoryId  String
   category    Category       @relation(fields: [categoryId], references: [id])
@@ -48,6 +52,9 @@ model User {
   name      String?
   email     String   @unique
   password  String
+  phone     String?
+  gender    String?
+  birthDate DateTime?
   role      UserRole @default(CUSTOMER)
   createdAt DateTime @default(now())
   orders    Order[]
@@ -81,4 +88,40 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
 
   @@unique([orderId, productId])
+}
+
+model HeroSlide {
+  id            String   @id @default(cuid())
+  image         String
+  leftTitle     String
+  leftSubtitle  String
+  rightTitle    String
+  rightSubtitle String
+  isActive      Boolean  @default(true)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model HomeSection {
+  id          String   @id @default(cuid())
+  type        String   // 'HERO', 'PRODUCT_SLIDER', 'CATEGORY_GRID', 'OFFLINE_STORE', 'BANNER'
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  title       String?
+  subtitle    String?
+  content     Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Article {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  excerpt   String   @db.Text
+  content   String   @db.Text
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -8,7 +8,10 @@ const nextConfig = {
           protocol: 'https',
           hostname: 'images.pexels.com', // Contoh jika pakai Pexels
         },
-        // Anda bisa tambahkan domain lain di sini
+        {
+          protocol: 'https',
+          hostname: 'res.cloudinary.com',
+        },
       ],
     },
   };

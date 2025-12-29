@@ -155,9 +155,9 @@ export const REGEX = {
 
 // Default Values
 export const DEFAULTS = {
-  AVATAR: '/img/default-avatar.png',
-  PRODUCT_IMAGE: '/img/placeholder.png',
-  LOGO: '/img/logo.png',
+  AVATAR: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-5.jpg',
+  PRODUCT_IMAGE: 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg',
+  LOGO: 'https://res.cloudinary.com/demo/image/upload/v1312461204/cld-sample-4.jpg',
   FAVICON: '/favicon.ico',
   LANGUAGE: 'id',
   CURRENCY: 'IDR',

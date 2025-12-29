@@ -1,10 +1,19 @@
+"use client";
 import Link from 'next/link';
 import Image from 'next/image';
 import { Instagram, Facebook, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import { FaCcVisa, FaCcMastercard, FaRegCreditCard } from 'react-icons/fa';
 import { SiWebmoney } from 'react-icons/si';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  // Hide Footer on admin pages
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <footer className="bg-gradient-to-br from-soft-pink-900 via-rose-900 to-soft-pink-800 text-soft-pink-100">
       <div className="container mx-auto px-4 sm:px-6 py-16">
