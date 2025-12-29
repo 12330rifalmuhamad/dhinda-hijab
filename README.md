@@ -204,4 +204,4 @@ For support, email info@dhindahijab.com or join our Discord community.
 
 ---
 
-Made with ❤️ by the Dhinda Hijab Team
+Made with ❤️ by the Dhinda Hijab Team# dhinda-hijab
