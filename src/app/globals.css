@@ -30,11 +30,13 @@ body {
   color: var(--foreground);
   font-family: var(--font-lato), system-ui, -apple-system, sans-serif;
   line-height: 1.6;
+  font-size: 0.875rem; /* 14px base - minimizing text size */
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-playfair), serif;
-  font-weight: 700;
+  font-weight: 500; /* Lighter weight for minimalist look */
+  letter-spacing: -0.02em; /* Tighter tracking for headers */
 }
 
 /* Custom scrollbar */

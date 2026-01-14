@@ -40,13 +40,13 @@ export async function POST(request) {
   try {
     const data = await request.json();
     const count = await prisma.homeSection.count();
-    
+
     // Default config based on type
     let defaultContent = {};
     if (data.type === 'HERO') defaultContent = { description: 'Hero Section managed separately' };
     if (data.type === 'PRODUCT_SLIDER') defaultContent = { title: 'New Collection', limit: 10 };
     if (data.type === 'CATEGORY_GRID') defaultContent = { title: 'Shop by Category' };
-    
+
     const section = await prisma.homeSection.create({
       data: {
         type: data.type,
@@ -54,6 +54,10 @@ export async function POST(request) {
         subtitle: data.subtitle || '',
         order: count,
         content: data.content || defaultContent,
+        backgroundColor: data.backgroundColor,
+        gradientStart: data.gradientStart,
+        gradientEnd: data.gradientEnd,
+        backgroundImage: data.backgroundImage,
       },
     });
     return NextResponse.json(section);
@@ -71,11 +75,11 @@ export async function PUT(request) {
 
   try {
     const { sections } = await request.json(); // Expect array of { id, order }
-    
+
     // Transaction for bulk update not strictly necessary if small list, 
     // but Promise.all is good.
     await Promise.all(
-      sections.map(section => 
+      sections.map(section =>
         prisma.homeSection.update({
           where: { id: section.id },
           data: { order: section.order }

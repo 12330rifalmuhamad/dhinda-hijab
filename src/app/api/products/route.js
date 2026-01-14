@@ -30,9 +30,9 @@ export async function GET(request) {
           }
         }
       },
-      orderBy: {
-        [sortBy]: sortOrder,
-      },
+      orderBy: sortBy === 'category'
+        ? { category: { name: sortOrder } }
+        : { [sortBy]: sortOrder },
       skip,
       take: limit,
     };

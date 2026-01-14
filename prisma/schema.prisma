@@ -25,6 +25,7 @@ model Product {
   shopeeUrl   String?        // Link to Shopee product
   tiktokUrl   String?        // Link to TikTok Shop product
   material    String?        // Product material (e.g. Katun Bordir)
+  videoUrl    String?        // URL to product video (e.g. cloudinary)
   images      ProductImage[]
   categoryId  String
   category    Category       @relation(fields: [categoryId], references: [id])
@@ -58,6 +59,7 @@ model User {
   role      UserRole @default(CUSTOMER)
   createdAt DateTime @default(now())
   orders    Order[]
+  vouchers  UserVoucher[]
 }
 
 enum OrderStatus {
@@ -111,6 +113,10 @@ model HomeSection {
   title       String?
   subtitle    String?
   content     Json?
+  backgroundColor String?
+  backgroundImage String?
+  gradientStart   String?
+  gradientEnd     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -124,4 +130,43 @@ model Article {
   imageUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PopupBanner {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  title     String?
+  linkUrl   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Voucher {
+  id          String        @id @default(cuid())
+  code        String        @unique
+  discount    Int           // Percentage (e.g. 10) or Flat Amount
+  type        String        // 'PERCENTAGE' or 'FLAT'
+  minPurchase Int           @default(0)
+  maxDiscount Int?          // Max discount amount for percentage type
+  stock       Int           @default(100)
+  startDate   DateTime      @default(now())
+  endDate     DateTime
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  userVouchers UserVoucher[]
+}
+
+model UserVoucher {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  voucherId String
+  voucher   Voucher  @relation(fields: [voucherId], references: [id])
+  isUsed    Boolean  @default(false)
+  claimedAt DateTime @default(now())
+  usedAt    DateTime?
+
+  @@unique([userId, voucherId]) // User can only claim a voucher once
 }

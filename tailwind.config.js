@@ -42,9 +42,9 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['var(--font-lato)', 'system-ui', 'sans-serif'],
-        serif: ['var(--font-playfair)', 'serif'],
-        display: ['var(--font-playfair)', 'serif'],
+        sans: ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-montserrat)', 'serif'],
+        display: ['var(--font-montserrat)', 'serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

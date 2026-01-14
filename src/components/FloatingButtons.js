@@ -9,9 +9,9 @@ export default function FloatingButtons() {
 
   return (
     <>
-      <CustomerLoginModal 
-        isOpen={isLoginOpen} 
-        onClose={() => setIsLoginOpen(false)} 
+      <CustomerLoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
         initialIsRegistering={true}
       />
 
@@ -30,9 +30,9 @@ export default function FloatingButtons() {
             <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
           </span>
         </motion.button>
-        
+
         {/* Tooltip Label */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.5 }}
@@ -44,20 +44,24 @@ export default function FloatingButtons() {
       </div>
 
       {/* Chat Button (Bottom Right) */}
-      <motion.button
+      {/* Chat Button (Bottom Right) */}
+      <motion.a
+        href="https://wa.me/6281234567890?text=Halo, saya ingin bertanya seputar produk Dhinda Hijab"
+        target="_blank"
+        rel="noopener noreferrer"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 1.2, type: "spring" }}
-        className="fixed bottom-6 right-6 z-40 bg-[#dca5ad] p-3 pl-4 pr-4 rounded-full shadow-lg text-white hover:bg-[#eebec6] transition-colors flex items-center gap-2 group"
+        className="fixed bottom-6 right-6 z-40 bg-[#dca5ad] p-3 pl-4 pr-4 rounded-full shadow-lg text-white hover:bg-[#eebec6] transition-colors flex items-center gap-2 group cursor-pointer"
       >
         <MessageCircle size={28} />
         <span className="font-medium text-lg">Chat</span>
-        
+
         {/* Notification Badge */}
         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold border-2 border-white">
           1
         </span>
-      </motion.button>
+      </motion.a>
     </>
   );
 }

@@ -49,6 +49,7 @@ export async function POST(request) {
         fileUri,
         {
           folder: "dhinda_hijab_products",
+          resource_type: "auto",
         },
         (error, result) => {
           if (error) reject(error);

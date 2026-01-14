@@ -4,23 +4,28 @@ import prisma from '@/lib/prisma';
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const search = searchParams.get('search') || '';
-  
+  const sort = searchParams.get('sort') || 'createdAt';
+  const order = searchParams.get('order') || 'desc';
+
   try {
     const products = await prisma.product.findMany({
       where: {
-        name: {
-          contains: search,
-          mode: 'insensitive',
-        },
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { category: { name: { contains: search, mode: 'insensitive' } } }
+        ]
       },
       include: {
         category: true,
         images: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: sort === 'category'
+        ? { category: { name: order } }
+        : { [sort]: order },
     });
     return NextResponse.json(products);
   } catch (error) {
+    console.error('Fetch error:', error);
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }
@@ -28,7 +33,7 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const data = await request.json();
-    const { name, description, price, stock, categoryId, shopeeUrl, tiktokUrl, material, images } = data;
+    const { name, description, price, stock, categoryId, shopeeUrl, tiktokUrl, videoUrl, material, images } = data;
 
     const product = await prisma.product.create({
       data: {
@@ -39,6 +44,7 @@ export async function POST(request) {
         categoryId,
         shopeeUrl,
         tiktokUrl,
+        videoUrl,
         material,
         images: {
           create: images.map(url => ({ url })),

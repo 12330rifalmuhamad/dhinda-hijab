@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Upload, X, Save, ArrowLeft } from 'lucide-react';
@@ -15,11 +15,12 @@ export default function ProductForm({ initialData, categories, isEditing = false
     categoryId: initialData?.categoryId || (categories?.[0]?.id || ''),
     shopeeUrl: initialData?.shopeeUrl || '',
     tiktokUrl: initialData?.tiktokUrl || '',
+    videoUrl: initialData?.videoUrl || '',
     material: initialData?.material || '',
     images: initialData?.images?.map(img => img.url) || []
   });
 
-  const fileInputRef = useRef(null);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,28 +37,28 @@ export default function ProductForm({ initialData, categories, isEditing = false
     // Upload logic here - utilizing the existing upload API
     // We upload one by one for simplicity
     for (const file of files) {
-        const uploadData = new FormData();
-        uploadData.append('file', file);
+      const uploadData = new FormData();
+      uploadData.append('file', file);
 
-        try {
-            const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
-            const data = await res.json();
-            if (res.ok) {
-                setFormData(prev => ({
-                    ...prev,
-                    images: [...prev.images, data.url]
-                }));
-            }
-        } catch (error) {
-            console.error('Upload failed', error);
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
+        const data = await res.json();
+        if (res.ok) {
+          setFormData(prev => ({
+            ...prev,
+            images: [...prev.images, data.url]
+          }));
         }
+      } catch (error) {
+        console.error('Upload failed', error);
+      }
     }
   };
 
   const removeImage = (index) => {
     setFormData(prev => ({
-        ...prev,
-        images: prev.images.filter((_, i) => i !== index)
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
     }));
   };
 
@@ -92,163 +93,229 @@ export default function ProductForm({ initialData, categories, isEditing = false
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border p-6">
       <div className="flex items-center gap-4 mb-6 border-b pb-4">
-         <button type="button" onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full">
-            <ArrowLeft size={20} className="text-gray-500"/>
-         </button>
-         <h1 className="text-xl font-bold text-gray-800">
-            {isEditing ? 'Edit Product' : 'Add New Product'}
-         </h1>
+        <button type="button" onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full">
+          <ArrowLeft size={20} className="text-gray-500" />
+        </button>
+        <h1 className="text-xl font-bold text-gray-800">
+          {isEditing ? 'Edit Product' : 'Add New Product'}
+        </h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column: Details */}
         <div className="space-y-6">
-           <div>
-             <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-             <input
-               name="name"
-               value={formData.name}
-               onChange={handleChange}
-               required
-               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
-             />
-           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+            <input
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
+            />
+          </div>
 
-           <div>
-             <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-             <select
-               name="categoryId"
-               value={formData.categoryId}
-               onChange={handleChange}
-               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
-             >
-               {categories.map(cat => (
-                 <option key={cat.id} value={cat.id}>{cat.name}</option>
-               ))}
-             </select>
-           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <select
+              name="categoryId"
+              value={formData.categoryId}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
+            >
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
 
-           <div className="grid grid-cols-2 gap-4">
-             <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
-               <input
-                 type="number"
-                 name="price"
-                 value={formData.price}
-                 onChange={handleChange}
-                 required
-                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
-               />
-             </div>
-             <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-               <input
-                 type="number"
-                 name="stock"
-                 value={formData.stock}
-                 onChange={handleChange}
-                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
-               />
-             </div>
-           </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+              <input
+                type="number"
+                name="stock"
+                value={formData.stock}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
+              />
+            </div>
+          </div>
 
-           <div>
-             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-             <textarea
-               name="description"
-               value={formData.description}
-               onChange={handleChange}
-               rows={4}
-               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
-             />
-           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={4}
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
+            />
+          </div>
 
-           <div>
-             <label className="block text-sm font-medium text-gray-700 mb-1">Material (Bahan)</label>
-             <input
-               name="material"
-               value={formData.material || ''}
-               onChange={handleChange}
-               placeholder="Ex: Katun Bordir"
-               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
-             />
-           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Material (Bahan)</label>
+            <input
+              name="material"
+              value={formData.material || ''}
+              onChange={handleChange}
+              placeholder="Ex: Katun Bordir"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
+            />
+          </div>
 
-           <div className="bg-gray-50 p-4 rounded-lg border">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Marketplace Links</h3>
-              <div className="space-y-3">
-                 <div>
-                   <label className="block text-xs font-medium text-orange-600 mb-1">Shopee URL</label>
-                   <input
-                     name="shopeeUrl"
-                     value={formData.shopeeUrl}
-                     onChange={handleChange}
-                     placeholder="https://shopee.co.id/..."
-                     className="w-full px-3 py-2 border rounded-lg text-sm bg-white"
-                   />
-                 </div>
-                 <div>
-                   <label className="block text-xs font-medium text-black mb-1">TikTok Shop URL</label>
-                   <input
-                     name="tiktokUrl"
-                     value={formData.tiktokUrl}
-                     onChange={handleChange}
-                     placeholder="https://tiktok.com/@..."
-                     className="w-full px-3 py-2 border rounded-lg text-sm bg-white"
-                   />
-                 </div>
+          <div className="bg-gray-50 p-4 rounded-lg border">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Marketplace Links</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-orange-600 mb-1">Shopee URL</label>
+                <input
+                  name="shopeeUrl"
+                  value={formData.shopeeUrl}
+                  onChange={handleChange}
+                  placeholder="https://shopee.co.id/..."
+                  className="w-full px-3 py-2 border rounded-lg text-sm bg-white"
+                />
               </div>
-           </div>
+              <div>
+                <label className="block text-xs font-medium text-black mb-1">TikTok Shop URL</label>
+                <input
+                  name="tiktokUrl"
+                  value={formData.tiktokUrl}
+                  onChange={handleChange}
+                  placeholder="https://tiktok.com/@..."
+                  className="w-full px-3 py-2 border rounded-lg text-sm bg-white"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-blue-600 mb-1">Video URL (e.g. Cloudinary/MP4)</label>
+                <div className="flex gap-2">
+                  <input
+                    name="videoUrl"
+                    value={formData.videoUrl}
+                    onChange={handleChange}
+                    placeholder="https://res.cloudinary.com/..."
+                    className="w-full px-3 py-2 border rounded-lg text-sm bg-white"
+                  />
+                  <div
+                    className="bg-blue-600 text-white px-3 py-2 rounded-lg cursor-pointer hover:bg-blue-700 relative overflow-hidden flex items-center justify-center min-w-[40px]"
+                    title="Upload Video"
+                  >
+                    <Upload size={16} />
+                    <input
+                      type="file"
+                      accept="video/*"
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                      onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        // Basic loading indicator could be added here
+                        const uploadData = new FormData();
+                        uploadData.append('file', file);
+
+                        try {
+                          e.target.disabled = true;
+                          const originalText = e.target.parentNode.innerHTML;
+
+                          const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
+                          const data = await res.json();
+                          if (res.ok) {
+                            setFormData(prev => ({ ...prev, videoUrl: data.url }));
+                          } else {
+                            alert('Video upload failed: ' + (data.error || 'Unknown error'));
+                          }
+                        } catch (err) {
+                          console.error(err);
+                          alert('Video upload failed');
+                        } finally {
+                          e.target.disabled = false;
+                          e.target.value = null; // Reset input
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+                {formData.videoUrl && (
+                  <div className="mt-2 relative rounded overflow-hidden bg-black aspect-video max-w-[200px]">
+                    <video src={formData.videoUrl} className="w-full h-full object-cover" controls muted />
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, videoUrl: '' }))}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Right Column: Images */}
         <div>
-           <label className="block text-sm font-medium text-gray-700 mb-3">Product Images</label>
-           
-           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
-              {formData.images.map((url, index) => (
-                <div key={index} className="relative aspect-square rounded-lg overflow-hidden border group">
-                   <Image src={url} alt="Product" fill className="object-cover" />
-                   <button
-                     type="button"
-                     onClick={() => removeImage(index)}
-                     className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                   >
-                     <X size={14} />
-                   </button>
-                </div>
-              ))}
+          <label className="block text-sm font-medium text-gray-700 mb-3">Product Images</label>
 
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors text-gray-400"
-              >
-                 <Upload size={24} />
-                 <span className="text-xs mt-2">Upload</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+            {formData.images.map((url, index) => (
+              <div key={index} className="relative aspect-square rounded-lg overflow-hidden border group bg-gray-50 flex items-center justify-center">
+                {(url.endsWith('.mp4') || url.endsWith('.webm') || url.match(/\/video\/upload\//)) ? (
+                  <video src={url} className="w-full h-full object-cover" muted playsInline />
+                ) : (
+                  <Image src={url} alt="Product" fill className="object-cover" />
+                )}
+                <button
+                  type="button"
+                  onClick={() => removeImage(index)}
+                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                >
+                  <X size={14} />
+                </button>
+                {(url.endsWith('.mp4') || url.endsWith('.webm') || url.match(/\/video\/upload\//)) && (
+                  <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/50 text-white text-[10px] rounded">VIDEO</div>
+                )}
               </div>
-           </div>
-           
-           <input 
-             type="file" 
-             ref={fileInputRef} 
-             multiple 
-             accept="image/*"
-             className="hidden" 
-             onChange={handleImageUpload}
-           />
-           <p className="text-xs text-gray-500">Upload multiple images. The first image will be the main thumbnail.</p>
+            ))}
+
+            <div
+              className="relative aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors text-gray-400"
+            >
+              <Upload size={24} />
+              <span className="text-xs mt-2">Upload Media</span>
+              <input
+                type="file"
+                multiple
+                accept="image/*,video/*"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onChange={handleImageUpload}
+              />
+            </div>
+          </div>
+          <p className="text-xs text-gray-500">Upload multiple images or videos. The first item will be the main thumbnail.</p>
         </div>
       </div>
 
       <div className="mt-8 flex justify-end pt-6 border-t font-medium">
-         <button
-           type="submit"
-           disabled={loading}
-           className="flex items-center gap-2 px-6 py-2.5 bg-[#dca5ad] text-white rounded-lg hover:bg-[#c48b94] transition-colors disabled:opacity-50"
-         >
-           <Save size={18} />
-           {loading ? 'Saving...' : 'Save Product'}
-         </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex items-center gap-2 px-6 py-2.5 bg-[#dca5ad] text-white rounded-lg hover:bg-[#c48b94] transition-colors disabled:opacity-50"
+        >
+          <Save size={18} />
+          {loading ? 'Saving...' : 'Save Product'}
+        </button>
       </div>
     </form>
   );

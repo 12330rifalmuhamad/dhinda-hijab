@@ -9,7 +9,7 @@ export async function GET(request, { params }) {
       include: {
         category: true,
         images: {
-            orderBy: { createdAt: 'asc' }
+          orderBy: { createdAt: 'asc' }
         },
       },
     });
@@ -28,44 +28,45 @@ export async function PUT(request, { params }) {
   const { id } = await params;
   try {
     const data = await request.json();
-    const { name, description, price, stock, categoryId, shopeeUrl, tiktokUrl, material, images } = data;
+    const { name, description, price, stock, categoryId, shopeeUrl, tiktokUrl, videoUrl, material, images } = data;
 
     // Transaction to handle product update and image sync
     const product = await prisma.$transaction(async (tx) => {
-        // 1. Update basic fields
-        const updated = await tx.product.update({
-            where: { id },
-            data: {
-                name,
-                description,
-                price,
-                stock,
-                categoryId,
-                shopeeUrl,
-                tiktokUrl,
-                material,
-            }
-        });
-
-        // 2. Handle Images
-        // Strategy: Delete all existing and recreate (simplest for order/sync) 
-        // OR smart diff. For simplicity and maintaining order if passed in order:
-        // However, `images` coming in might be a mix of new URLs and keeping existing.
-        // If the UI sends the full list of desired URLs, we can:
-        // Delete all images for this product
-        await tx.productImage.deleteMany({ where: { productId: id } });
-        
-        // Create new entries for all URLs in the list
-        if (images && images.length > 0) {
-            await tx.productImage.createMany({
-                data: images.map(url => ({
-                    productId: id,
-                    url: url
-                }))
-            });
+      // 1. Update basic fields
+      const updated = await tx.product.update({
+        where: { id },
+        data: {
+          name,
+          description,
+          price,
+          stock,
+          categoryId,
+          shopeeUrl,
+          tiktokUrl,
+          videoUrl,
+          material,
         }
-        
-        return updated;
+      });
+
+      // 2. Handle Images
+      // Strategy: Delete all existing and recreate (simplest for order/sync) 
+      // OR smart diff. For simplicity and maintaining order if passed in order:
+      // However, `images` coming in might be a mix of new URLs and keeping existing.
+      // If the UI sends the full list of desired URLs, we can:
+      // Delete all images for this product
+      await tx.productImage.deleteMany({ where: { productId: id } });
+
+      // Create new entries for all URLs in the list
+      if (images && images.length > 0) {
+        await tx.productImage.createMany({
+          data: images.map(url => ({
+            productId: id,
+            url: url
+          }))
+        });
+      }
+
+      return updated;
     });
 
     return NextResponse.json(product);
