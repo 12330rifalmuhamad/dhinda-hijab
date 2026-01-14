@@ -33,19 +33,18 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const data = await request.json();
-    const { name, description, price, stock, categoryId, shopeeUrl, tiktokUrl, videoUrl, material, images } = data;
+    const { name, description, price, categoryId, shopeeUrl, tiktokUrl, videoUrl, isBestSeller, images } = data;
 
     const product = await prisma.product.create({
       data: {
         name,
         description,
         price,
-        stock,
         categoryId,
         shopeeUrl,
         tiktokUrl,
         videoUrl,
-        material,
+        isBestSeller,
         images: {
           create: images.map(url => ({ url })),
         },

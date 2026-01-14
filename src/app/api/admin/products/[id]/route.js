@@ -28,7 +28,7 @@ export async function PUT(request, { params }) {
   const { id } = await params;
   try {
     const data = await request.json();
-    const { name, description, price, stock, categoryId, shopeeUrl, tiktokUrl, videoUrl, material, images } = data;
+    const { name, description, price, categoryId, shopeeUrl, tiktokUrl, videoUrl, isBestSeller, images } = data;
 
     // Transaction to handle product update and image sync
     const product = await prisma.$transaction(async (tx) => {
@@ -39,12 +39,11 @@ export async function PUT(request, { params }) {
           name,
           description,
           price,
-          stock,
           categoryId,
           shopeeUrl,
           tiktokUrl,
           videoUrl,
-          material,
+          isBestSeller,
         }
       });
 

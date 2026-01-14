@@ -79,7 +79,6 @@ function ProductsContent() {
 
     return (
         <>
-            <Navbar />
             <main className="container mx-auto px-4 sm:px-6 py-12 min-h-screen bg-[#fffcfc]">
                 <div className="text-center mb-12">
                     <h1 className="text-4xl md:text-5xl font-serif text-[#4a4042] mb-4">All Collections</h1>

@@ -22,6 +22,7 @@ model Product {
   description String?
   price       Int
   stock       Int            @default(0)
+  isBestSeller Boolean       @default(false)
   shopeeUrl   String?        // Link to Shopee product
   tiktokUrl   String?        // Link to TikTok Shop product
   material    String?        // Product material (e.g. Katun Bordir)

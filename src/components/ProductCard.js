@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Star, Flame, Truck, MapPin } from 'lucide-react';
 
 export default function ProductCard({ product, index }) {
   const cardVariants = {
@@ -22,42 +23,38 @@ export default function ProductCard({ product, index }) {
 
   const imageUrl = (!isPrimaryVideo && primaryMedia)
     ? primaryMedia
-    : 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'; // Fallback if first item is video (we'll handle video rendering separately or rely on videoUrl)
+    : 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg';
 
-  // Mocking original price calculation for visual demo if not in DB
-  const originalPrice = product.price * 1.1;
+  // Mocking data for visual match if missing from DB
+  const originalPrice = product.price * 1.35; // ~35% diff for visual drama
+  const discountPercentage = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+  const soldCount = "8.4K+"; // Mock
+  const rating = 4.9; // Mock
 
   return (
     <motion.div
-      className="group cursor-pointer bg-white p-0 rounded-xl overflow-hidden"
+      className="group cursor-pointer bg-white rounded-xl border border-pink-50 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full relative"
       variants={cardVariants}
       initial="hidden"
-      whileInView="visible" // Animate when in view
+      whileInView="visible"
       viewport={{ once: true }}
     >
-      <Link href={`/produk/${product.id}`} className="block">
-        {/* Media Container - Video First, then Image on Hover */}
-        <div className="relative w-full aspect-square overflow-hidden bg-gray-100">
-          {/* If videoUrl exists, show video. It will autoplay. On hover, we hide it or show image on top? 
-               Request: "menampilkan video seperti gif dan ketika hover cursor berubah menjadi foto produk"
-               So:
-               Default: Video (if available)
-               Hover: Image
-               
-               Implementation:
-               Stack them. 
-               Layer 1 (Bottom): Image (always there? or only if no video?)
-               Layer 2 (Top): Video (Visible by default. On hover, Opacity 0 to reveal image?)
-               
-               Let's try:
-               Render Image (absolute inset-0).
-               Render Video (absolute inset-0, z-10).
-               CSS: .group:hover video { opacity: 0 }
-               
-               Wait, "Video default, Image on hover".
-               So Video is on top. Hover hides video.
-           */}
+      <Link href={`/produk/${product.id}`} className="block h-full flex flex-col">
+        {/* Media Container */}
+        <div className="relative w-full aspect-[4/5] overflow-hidden bg-gray-50">
+          {/* Overlays - Top Left - Soft & Minimal */}
+          <div className="absolute top-3 left-3 z-20 flex flex-col items-start gap-1">
+            {/* XTRA Badge - Soft Green/Teal converted to Soft Pink/Sage */}
+            <div className="backdrop-blur-md bg-white/80 border border-pink-100 text-[#c48b94] text-[10px] font-medium px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+              <Truck className="w-3 h-3 text-[#dca5ad]" />
+              <span>Free Shipping</span>
+            </div>
+          </div>
 
+          {/* Bottom Overlay - Soft Gradient */}
+          <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/40 to-transparent p-3 pt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            {/* Optional hover content could go here */}
+          </div>
 
           {(isPrimaryVideo && primaryMedia) ? (
             <video
@@ -73,7 +70,8 @@ export default function ProductCard({ product, index }) {
               src={imageUrl}
               alt={product.name}
               fill
-              className="object-cover z-0"
+              className="object-cover z-0 transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
             />
           )}
 
@@ -87,30 +85,51 @@ export default function ProductCard({ product, index }) {
               className="absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-300 group-hover:opacity-0"
             />
           )}
-
-          {/* On Sale Badge - Top Left (Ensure z-20 to be above video) */}
-          <div className="absolute top-6 left-6 z-20">
-            <span className="bg-[#EEE4E4] text-gray-800 text-xs tracking-[0.2em] font-medium px-4 py-2 uppercase">
-              On Sale
-            </span>
-          </div>
         </div>
 
         {/* Content Container */}
-        <div className="pt-6 pb-8 px-4 text-center">
+        <div className="p-3 flex flex-col flex-grow bg-white">
+          {/* Shop Badges - Harmonious Colors */}
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            <span className="bg-[#fff0f3] text-[#c48b94] text-[9px] font-semibold px-1.5 py-0.5 rounded-md border border-pink-100">
+              Official Store
+            </span>
+            <span className="bg-[#fff0f3] text-[#c48b94] text-[9px] font-semibold px-1.5 py-0.5 rounded-md border border-pink-100">
+              Best Seller
+            </span>
+          </div>
+
           {/* Title */}
-          <h3 className="text-sm md:text-base font-medium text-gray-600 uppercase tracking-[0.15em] leading-relaxed mb-4 line-clamp-2">
+          <h3 className="text-sm text-[#4a4042] font-medium leading-snug line-clamp-2 mb-2 min-h-[2.5em] group-hover:text-[#c48b94] transition-colors">
             {product.name}
           </h3>
 
-          {/* Prices */}
-          <div className="flex items-center justify-center gap-4 text-sm md:text-base tracking-widest font-semibold">
-            <span className="text-[#c48b94]">
-              RP {product.price.toLocaleString('id-ID')}
-            </span>
-            <span className="text-gray-400 line-through decoration-1">
-              RP {originalPrice.toLocaleString('id-ID', { maximumFractionDigits: 0 })}
-            </span>
+          {/* Price Section */}
+          <div className="mt-auto">
+            <div className="flex items-baseline gap-2 flex-wrap mb-1">
+              <span className="text-[#c48b94] font-bold text-lg">
+                Rp{product.price.toLocaleString('id-ID')}
+              </span>
+              <span className="text-xs text-gray-400 line-through decoration-1">
+                Rp{originalPrice.toLocaleString('id-ID', { maximumFractionDigits: 0 })}
+              </span>
+            </div>
+
+            {/* Rating & Sold */}
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-dashed border-pink-50">
+              <div className="flex items-center gap-3 text-[11px] text-gray-500">
+                <div className="flex items-center gap-1">
+                  <Star className="w-3 h-3 fill-[#ffedd5] text-[#fbbf24]" />
+                  <span className="font-medium text-[#4a4042]">{rating}</span>
+                </div>
+                <span>{soldCount} Sold</span>
+              </div>
+
+              {/* Add to Cart / Action Icon (Optional - just visual for now) */}
+              <div className="w-6 h-6 rounded-full bg-[#fff0f3] flex items-center justify-center text-[#c48b94] opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
+              </div>
+            </div>
           </div>
         </div>
       </Link>

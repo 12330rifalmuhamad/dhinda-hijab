@@ -50,7 +50,7 @@ export default function Navbar({ categories = [] }) {
     <>
       {/* Placeholder to prevent layout shift */}
       <div className="h-[120px] w-full block"></div>
-
+      src/app/favicon.ico
       <CustomerLoginModal
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
@@ -74,7 +74,7 @@ export default function Navbar({ categories = [] }) {
                 {/* Logo Placeholder */}
                 <div className="hidden lg:block relative w-20 h-20">
                   <Image
-                    src="/img/logo.JPEG"
+                    src="/img/logo.png"
                     alt="Logo"
                     fill
                     className="object-contain"

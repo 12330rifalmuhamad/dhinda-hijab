@@ -48,6 +48,20 @@ async function getProducts() {
   }
 }
 
+async function getBestSellerProducts() {
+  try {
+    return await prisma.product.findMany({
+      where: { isBestSeller: true },
+      take: 8,
+      orderBy: { updatedAt: 'desc' },
+      include: { images: true }
+    });
+  } catch (error) {
+    console.error("Gagal mengambil produk best seller:", error);
+    return [];
+  }
+}
+
 async function getCategories() {
   try {
     return await prisma.category.findMany({
@@ -60,8 +74,9 @@ async function getCategories() {
 }
 
 export default async function HomePage() {
-  const [products, categories, sections, articles] = await Promise.all([
+  const [products, bestSellers, categories, sections, articles] = await Promise.all([
     getProducts(),
+    getBestSellerProducts(),
     getCategories(),
     getSections(),
     getArticles()
@@ -72,7 +87,7 @@ export default async function HomePage() {
     return (
       <main className="relative bg-gradient-to-b from-soft-pink-100 to-white">
         <HeroSection />
-        <MostWantedSection products={products} />
+        <MostWantedSection products={bestSellers} />
         <CategoriesSection categories={categories} />
         <CategoriesSection categories={categories} />
         <OfflineStoreSection />
@@ -91,7 +106,7 @@ export default async function HomePage() {
             case 'HERO':
               return <HeroSection />;
             case 'PRODUCT_SLIDER':
-              return <MostWantedSection products={products} limit={section.content?.limit} title={section.content?.title} />;
+              return <MostWantedSection products={bestSellers} limit={section.content?.limit} title={section.content?.title} />;
             case 'CATEGORY_GRID':
               return <CategoriesSection categories={categories} title={section.content?.title} />;
             case 'OFFLINE_STORE':
