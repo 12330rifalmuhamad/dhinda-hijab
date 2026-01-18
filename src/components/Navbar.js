@@ -109,7 +109,7 @@ export default function Navbar({ categories = [] }) {
                   className="p-2 text-[#4a4042] hover:text-[#dca5ad] transition-colors flex items-center gap-2"
                 >
                   {session?.user?.image ? (
-                    <img src={session.user.image} alt="User" className="w-6 h-6 rounded-full border border-gray-200" />
+                    <Image src={session.user.image} alt="User" width={24} height={24} className="rounded-full border border-gray-200" />
                   ) : (
                     <User size={20} strokeWidth={1.5} />
                   )}

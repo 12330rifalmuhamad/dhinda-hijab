@@ -53,7 +53,7 @@ export default function TestimonySection({ section }) {
                                 </div>
 
                                 <p className="text-gray-600 italic mb-6 leading-relaxed flex-1">
-                                    "{item.message}"
+                                    &quot;{item.message}&quot;
                                 </p>
 
                                 <div>

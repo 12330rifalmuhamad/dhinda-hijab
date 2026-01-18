@@ -20,7 +20,7 @@ export default function VouchersPage() {
         } else if (session === null) {
             router.push('/login');
         }
-    }, [session]);
+    }, [session, router]);
 
     const fetchVouchers = async () => {
         setLoading(true);

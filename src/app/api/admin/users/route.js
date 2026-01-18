@@ -26,7 +26,6 @@ export async function GET(request) {
         });
 
         const safeUsers = users.map(user => {
-            // eslint-disable-next-line no-unused-vars
             const { password, ...rest } = user;
             return rest;
         });

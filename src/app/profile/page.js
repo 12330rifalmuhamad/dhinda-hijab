@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { User, LogOut, Package, Ticket } from "lucide-react";
@@ -32,7 +33,7 @@ export default function ProfilePage() {
                     <div className="bg-[#fff8f8] p-8 border-b border-gray-100 flex flex-col md:flex-row items-center gap-6">
                         <div className="w-24 h-24 rounded-full bg-[#dca5ad]/20 flex items-center justify-center text-[#dca5ad]">
                             {session.user.image ? (
-                                <img src={session.user.image} alt={session.user.name} className="w-full h-full rounded-full object-cover" />
+                                <Image src={session.user.image} alt={session.user.name} width={96} height={96} className="rounded-full object-cover" />
                             ) : (
                                 <User size={40} />
                             )}
