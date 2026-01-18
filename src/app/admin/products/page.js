@@ -20,6 +20,7 @@ export default function AdminProductsPage() {
       setProducts(data);
     } catch (error) {
       console.error('Failed to fetch products', error);
+      // Optionally, set an error state to display to the user
     } finally {
       setLoading(false);
     }

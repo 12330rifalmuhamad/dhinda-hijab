@@ -4,10 +4,15 @@ import { notFound } from 'next/navigation';
 
 export default async function EditCategoryPage({ params }) {
   const { id } = await params;
-  
-  const category = await prisma.category.findUnique({
-    where: { id },
-  });
+
+  let category = null;
+  try {
+    category = await prisma.category.findUnique({
+      where: { id },
+    });
+  } catch (error) {
+    console.error("Failed to fetch category:", error);
+  }
 
   if (!category) notFound();
 

@@ -4,10 +4,15 @@ import { notFound } from 'next/navigation';
 
 export default async function EditArticlePage({ params }) {
   const { id } = await params;
-  
-  const article = await prisma.article.findUnique({
-    where: { id },
-  });
+
+  let article = null;
+  try {
+    article = await prisma.article.findUnique({
+      where: { id },
+    });
+  } catch (error) {
+    console.error("Failed to fetch article:", error);
+  }
 
   if (!article) notFound();
 

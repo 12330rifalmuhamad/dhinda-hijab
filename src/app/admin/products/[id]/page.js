@@ -4,14 +4,21 @@ import { notFound } from 'next/navigation';
 
 export default async function EditProductPage({ params }) {
   const { id } = await params;
-  
-  const [product, categories] = await Promise.all([
-     prisma.product.findUnique({
+
+  let product = null;
+  let categories = [];
+
+  try {
+    [product, categories] = await Promise.all([
+      prisma.product.findUnique({
         where: { id },
         include: { images: true }
-     }),
-     prisma.category.findMany({ orderBy: { name: 'asc' }})
-  ]);
+      }),
+      prisma.category.findMany({ orderBy: { name: 'asc' } })
+    ]);
+  } catch (error) {
+    console.error("Failed to fetch product data:", error);
+  }
 
   if (!product) notFound();
 
