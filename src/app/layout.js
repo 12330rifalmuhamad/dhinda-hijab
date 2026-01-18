@@ -22,11 +22,17 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   // Fetch categories for the Navbar
-  const categories = await prisma.category.findMany({
-    orderBy: {
-      name: 'asc'
-    }
-  });
+  let categories = [];
+  try {
+    categories = await prisma.category.findMany({
+      orderBy: {
+        name: 'asc'
+      }
+    });
+  } catch (error) {
+    console.error("Failed to fetch categories during build:", error);
+    // Continue with empty categories to allow build to finish
+  }
 
   return (
     <html lang="id">
