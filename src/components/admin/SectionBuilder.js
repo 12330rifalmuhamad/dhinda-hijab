@@ -624,7 +624,7 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                           }}
                         />
                         <p className="text-[10px] text-gray-400 mt-1">
-                          Paste the 'src' link from Google Maps Embed iframe.
+                          Paste the &apos;src&apos; link from Google Maps Embed iframe.
                         </p>
                       </div>
                     </div>
