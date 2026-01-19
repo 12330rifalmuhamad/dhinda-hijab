@@ -114,7 +114,7 @@ export default async function HomePage() {
             case 'CATEGORY_GRID':
               return <CategoriesSection categories={categories} title={section.content?.title} />;
             case 'OFFLINE_STORE':
-              return <OfflineStoreSection />;
+              return <OfflineStoreSection section={section} />;
             case 'BANNER':
               return (
                 <div className="w-full mb-12">

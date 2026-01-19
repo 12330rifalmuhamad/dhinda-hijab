@@ -9,7 +9,7 @@ export default function CategoriesSection({ categories }) {
     <section id="categories" className="py-12 md:py-20">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center mb-12">
-          <span className="text-sm font-medium text-[#dca5ad] uppercase tracking-[0.2em] mb-3 block">Hana Collection</span>
+          <span className="text-sm font-medium text-[#dca5ad] uppercase tracking-[0.2em] mb-3 block">Dhinda Collection</span>
           <h2 className="text-2xl md:text-3xl font-serif text-[#4a4042] mb-4">Explore Our Collections</h2>
           <p className=" text-gray-500 max-w-xl mx-auto font-light">Find the style that speaks to your personality.</p>
         </motion.div>

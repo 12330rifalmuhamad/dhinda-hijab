@@ -531,18 +531,110 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
           </div>
         )}
 
-        {formData.type === 'PRODUCT_SLIDER' && (
-          <div className="bg-gray-50 p-4 rounded-lg border">
-            <h3 className="text-sm font-medium mb-2 text-gray-500">Slider Config</h3>
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Limit Products</label>
-                <input
-                  type="number"
-                  value={formData.content?.limit || 10}
-                  onChange={(e) => handleContentChange('limit', parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border rounded-lg outline-none"
-                />
+        {formData.type === 'OFFLINE_STORE' && (
+          <div className="bg-gray-50 p-4 rounded-lg border space-y-6">
+            <h3 className="text-sm font-medium mb-2 text-gray-500">Stores Config</h3>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-medium text-gray-700">Stores ({formData.content?.stores?.length || 0})</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newStore = { id: Date.now(), city: '', mall: '', address: '', hours: '', mapUrl: '' };
+                    const current = formData.content?.stores || [];
+                    handleContentChange('stores', [...current, newStore]);
+                  }}
+                  className="text-xs bg-[#dca5ad] text-white px-3 py-1.5 rounded hover:bg-[#c48b94]"
+                >
+                  + Add Store
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 max-h-[500px] overflow-y-auto pr-2">
+                {(formData.content?.stores || []).map((store, index) => (
+                  <div key={store.id || index} className="bg-white p-4 rounded border relative group">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newStores = formData.content.stores.filter((_, i) => i !== index);
+                        handleContentChange('stores', newStores);
+                      }}
+                      className="absolute top-2 right-2 text-red-400 hover:text-red-600 p-1"
+                    >
+                      <X size={16} />
+                    </button>
+
+                    <h4 className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">Store #{index + 1}</h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-3">
+                        <input
+                          placeholder="City (e.g. Cikampek)"
+                          className="text-sm border rounded px-2 py-1 w-full"
+                          value={store.city || ''}
+                          onChange={(e) => {
+                            const newStores = [...formData.content.stores];
+                            newStores[index].city = e.target.value;
+                            handleContentChange('stores', newStores);
+                          }}
+                        />
+                        <input
+                          placeholder="Mall / Location (e.g. Mall Bohemi)"
+                          className="text-sm border rounded px-2 py-1 w-full"
+                          value={store.mall || ''}
+                          onChange={(e) => {
+                            const newStores = [...formData.content.stores];
+                            newStores[index].mall = e.target.value;
+                            handleContentChange('stores', newStores);
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <input
+                          placeholder="Address (Full Address)"
+                          className="text-sm border rounded px-2 py-1 w-full"
+                          value={store.address || ''}
+                          onChange={(e) => {
+                            const newStores = [...formData.content.stores];
+                            newStores[index].address = e.target.value;
+                            handleContentChange('stores', newStores);
+                          }}
+                        />
+                        <input
+                          placeholder="Hours (e.g. 10:00 - 22:00)"
+                          className="text-sm border rounded px-2 py-1 w-full"
+                          value={store.hours || ''}
+                          onChange={(e) => {
+                            const newStores = [...formData.content.stores];
+                            newStores[index].hours = e.target.value;
+                            handleContentChange('stores', newStores);
+                          }}
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <input
+                          placeholder="Map Embed URL (src from iframe)"
+                          className="text-sm border rounded px-2 py-1 w-full font-mono text-gray-500"
+                          value={store.mapUrl || ''}
+                          onChange={(e) => {
+                            const newStores = [...formData.content.stores];
+                            newStores[index].mapUrl = e.target.value;
+                            handleContentChange('stores', newStores);
+                          }}
+                        />
+                        <p className="text-[10px] text-gray-400 mt-1">
+                          Paste the 'src' link from Google Maps Embed iframe.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {(!formData.content?.stores || formData.content.stores.length === 0) && (
+                  <div className="text-center py-8 text-gray-400 bg-white rounded border border-dashed">
+                    No stores added.
+                  </div>
+                )}
               </div>
             </div>
           </div>

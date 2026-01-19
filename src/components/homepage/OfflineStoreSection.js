@@ -4,7 +4,9 @@ import { motion } from 'framer-motion';
 import { MapPin, Clock } from 'lucide-react';
 import { storeLocations } from '@/data/home';
 
-export default function OfflineStoreSection() {
+export default function OfflineStoreSection({ section }) {
+  const stores = section?.content?.stores || storeLocations;
+
   return (
     <section id="offline-store" className="py-12 md:py-24 bg-soft-pink-50">
       <div className="container mx-auto px-4 sm:px-6">
@@ -16,12 +18,12 @@ export default function OfflineStoreSection() {
           className="text-center mb-16"
         >
           <span className="text-xs md:text-sm font-medium text-[#dca5ad] uppercase tracking-[0.2em] mb-2 md:mb-3 block">Offline Stores</span>
-          <h2 className="text-xl md:text-3xl font-serif text-[#4a4042] mb-3 md:mb-4">Visit Our Boutiques</h2>
+          <h2 className="text-xl md:text-3xl font-serif text-[#4a4042] mb-3 md:mb-4">{section?.title || "Visit Our Boutiques"}</h2>
           <p className="text-gray-500 max-w-2xl mx-auto font-light">Experience the premium quality of our collections in person.</p>
         </motion.div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-12">
-          {storeLocations.map((store, index) => (
+          {stores.map((store, index) => (
             <motion.div
               key={store.city}
               initial={{ opacity: 0, y: 20 }}
