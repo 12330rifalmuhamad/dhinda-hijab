@@ -7,10 +7,14 @@ import { Upload, X, Save, ArrowLeft } from 'lucide-react';
 export default function ProductForm({ initialData, categories, isEditing = false }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     description: initialData?.description || '',
     price: initialData?.price || '',
+    price: initialData?.price || '',
+    originalPrice: initialData?.originalPrice || '',
+    label: initialData?.label || '',
     shopeeUrl: initialData?.shopeeUrl || '',
     tiktokUrl: initialData?.tiktokUrl || '',
     videoUrl: initialData?.videoUrl || '',
@@ -25,33 +29,61 @@ export default function ProductForm({ initialData, categories, isEditing = false
     setFormData(prev => ({
       ...prev,
       ...prev,
-      [name]: name === 'price' ? (value === '' ? '' : parseInt(value)) : value
+      [name]: (name === 'price' || name === 'originalPrice') ? (value === '' ? '' : parseInt(value)) : value
     }));
+  };
+
+  const uploadFileWithProgress = (file) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      const uploadData = new FormData();
+      uploadData.append('file', file);
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percentComplete);
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            resolve(data.url);
+          } catch (e) {
+            reject(new Error('Invalid JSON response'));
+          }
+        } else {
+          reject(new Error('Upload failed'));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error('Upload error'));
+      xhr.open('POST', '/api/upload', true);
+      xhr.send(uploadData);
+    });
   };
 
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
-    // Upload logic here - utilizing the existing upload API
-    // We upload one by one for simplicity
-    for (const file of files) {
-      const uploadData = new FormData();
-      uploadData.append('file', file);
+    setUploadProgress(1); // Start progress
 
+    for (const file of files) {
       try {
-        const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
-        const data = await res.json();
-        if (res.ok) {
-          setFormData(prev => ({
-            ...prev,
-            images: [...prev.images, data.url]
-          }));
-        }
+        const url = await uploadFileWithProgress(file);
+        setFormData(prev => ({
+          ...prev,
+          images: [...prev.images, url]
+        }));
       } catch (error) {
         console.error('Upload failed', error);
+        alert('Upload failed for one or more files');
       }
     }
+    setUploadProgress(0); // Reset after done
   };
 
   const removeImage = (index) => {
@@ -128,14 +160,38 @@ export default function ProductForm({ initialData, categories, isEditing = false
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Price (Promo)</label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Original Price (Coret)</label>
+              <input
+                type="number"
+                name="originalPrice"
+                value={formData.originalPrice}
+                onChange={handleChange}
+                placeholder="Optional"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Label / Tag (e.g. Best Seller, Almost Sold)</label>
             <input
-              type="number"
-              name="price"
-              value={formData.price}
+              name="label"
+              value={formData.label}
               onChange={handleChange}
-              required
+              placeholder="Optional label overlay"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
             />
           </div>
@@ -291,6 +347,22 @@ export default function ProductForm({ initialData, categories, isEditing = false
               />
             </div>
           </div>
+
+          {uploadProgress > 0 && (
+            <div className="mb-4">
+              <div className="flex justify-between text-xs mb-1">
+                <span>Uploading...</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div
+                  className="bg-[#dca5ad] h-2.5 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+            </div>
+          )}
+
           <p className="text-xs text-gray-500">Upload multiple images or videos. The first item will be the main thumbnail.</p>
         </div>
       </div>

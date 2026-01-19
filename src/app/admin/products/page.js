@@ -59,15 +59,15 @@ export default function AdminProductsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <main className="container mx-auto px-6 py-8">
-        <div className="flex justify-between items-center mb-8">
+      <main className="container mx-auto px-4 md:px-6 py-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Products</h1>
             <p className="text-gray-500">Manage your product catalog</p>
           </div>
           <Link
             href="/admin/products/new"
-            className="flex items-center gap-2 px-4 py-2 bg-[#dca5ad] text-white rounded-lg hover:bg-[#c48b94] transition-colors font-medium"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-[#dca5ad] text-white rounded-lg hover:bg-[#c48b94] transition-colors font-medium w-full md:w-auto"
           >
             <Plus size={18} />
             Add Product

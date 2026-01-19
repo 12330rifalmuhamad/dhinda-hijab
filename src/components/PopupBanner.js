@@ -32,7 +32,7 @@ export default function PopupBanner() {
                     // But usually "always check" suffices for "startup". 
                     // The simplest interpretation: Ignore isDismissed if isHomePage.
 
-                    if (isHomePage || !isDismissed) {
+                    if (!isDismissed) {
                         setPopup(data);
                         // Small delay for animation
                         setTimeout(() => setIsVisible(true), 1000);

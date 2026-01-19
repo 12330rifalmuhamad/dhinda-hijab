@@ -42,7 +42,7 @@ export default function HeroSection() {
   ];
 
   return (
-    <div className="relative w-full aspect-[16/6] md:h-auto min-h-[300px] md:min-h-0 overflow-hidden bg-[#e8d5b5]">
+    <div className="relative w-full h-[500px] md:h-auto md:aspect-[16/6] overflow-hidden bg-[#e8d5b5]">
       <Swiper
         modules={[Autoplay, EffectFade, Pagination, Navigation]}
         effect="fade"
@@ -74,7 +74,7 @@ export default function HeroSection() {
 
                     {/* Left Text */}
                     {slide.leftTitle && (
-                      <div className="md:w-1/3 text-left z-10 mt-20 md:mt-0">
+                      <div className="md:w-1/3 text-left z-10 mt-12 md:mt-0">
                         <motion.h2
                           initial={{ opacity: 0, x: -50 }}
                           animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
@@ -92,12 +92,12 @@ export default function HeroSection() {
 
                     {/* Right Text */}
                     {slide.rightTitle && (
-                      <div className="md:w-1/3 text-right z-10 mb-20 md:mb-0 flex flex-col items-end justify-center">
+                      <div className="md:w-1/3 text-right z-10 mb-12 md:mb-0 flex flex-col items-end justify-center">
                         <motion.h1
                           initial={{ opacity: 0, x: 50 }}
                           animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
                           transition={{ duration: 0.8, delay: 0.4 }}
-                          className="text-white text-6xl md:text-8xl font-serif italic mb-2 drop-shadow-sm"
+                          className="text-white text-4xl md:text-8xl font-serif italic mb-2 drop-shadow-sm"
                           style={{ fontFamily: "cursive" }}
                         >
                           {slide.rightTitle}
@@ -106,7 +106,7 @@ export default function HeroSection() {
                           initial={{ opacity: 0, x: 50 }}
                           animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
                           transition={{ duration: 0.8, delay: 0.6 }}
-                          className="text-white text-xl tracking-[0.2em] font-light uppercase drop-shadow-sm"
+                          className="text-white text-lg md:text-xl tracking-[0.2em] font-light uppercase drop-shadow-sm"
                         >
                           {slide.rightSubtitle}
                         </motion.p>

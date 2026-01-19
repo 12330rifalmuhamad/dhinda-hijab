@@ -1,10 +1,12 @@
 "use client";
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Image as ImageIcon, LogOut, Layers, ShoppingBag, Tag, BookOpen, Megaphone, Users } from 'lucide-react';
+import { LayoutDashboard, Image as ImageIcon, LogOut, Layers, ShoppingBag, Tag, BookOpen, Megaphone, Users, Menu, X } from 'lucide-react';
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Don't show sidebar on login page
   if (pathname === '/admin/login') {
@@ -29,9 +31,28 @@ export default function AdminLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gray-100 flex relative">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Hamburger Button (Mobile Only) */}
+      <button
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className="md:hidden fixed top-4 left-4 z-[60] p-2 bg-white rounded-lg shadow-md text-gray-700"
+      >
+        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md flex flex-col">
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-md flex flex-col transform transition-transform duration-300 md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+      >
         <div className="p-6 border-b flex justify-center">
           <Link href="/admin" className="flex flex-col items-center">
             <span className="text-xl font-serif tracking-[0.15em] text-[#4a4042] whitespace-nowrap">
@@ -43,7 +64,7 @@ export default function AdminLayout({ children }) {
           </Link>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -51,6 +72,7 @@ export default function AdminLayout({ children }) {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setIsSidebarOpen(false)} // Close sidebar on mobile when clicking link
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
                   ? 'bg-[#dca5ad] text-white'
                   : 'text-gray-600 hover:bg-gray-50'
@@ -75,7 +97,7 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full pt-20 md:pt-8">
         {children}
       </main>
     </div>

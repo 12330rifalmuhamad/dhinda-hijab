@@ -25,9 +25,6 @@ export default function ProductCard({ product, index }) {
     ? primaryMedia
     : 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg';
 
-  // Mocking data for visual match if missing from DB
-  const originalPrice = product.price * 1.35; // ~35% diff for visual drama
-  const discountPercentage = Math.round(((originalPrice - product.price) / originalPrice) * 100);
   const soldCount = "8.4K+"; // Mock
   const rating = 4.9; // Mock
 
@@ -44,6 +41,14 @@ export default function ProductCard({ product, index }) {
         <div className="relative w-full aspect-[4/5] overflow-hidden bg-gray-50">
           {/* Overlays - Top Left - Soft & Minimal */}
           <div className="absolute top-3 left-3 z-20 flex flex-col items-start gap-1">
+            {/* Custom Label */}
+            {product.label && (
+              <div className="backdrop-blur-md bg-white/90 border border-pink-200 text-[#c48b94] text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1 uppercase tracking-wider">
+                <Flame className="w-3 h-3 fill-[#c48b94]" />
+                <span>{product.label}</span>
+              </div>
+            )}
+
             {/* XTRA Badge - Soft Green/Teal converted to Soft Pink/Sage */}
             <div className="backdrop-blur-md bg-white/80 border border-pink-100 text-[#c48b94] text-[10px] font-medium px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
               <Truck className="w-3 h-3 text-[#dca5ad]" />
@@ -100,19 +105,21 @@ export default function ProductCard({ product, index }) {
           </div>
 
           {/* Title */}
-          <h3 className="text-sm text-[#4a4042] font-medium leading-snug line-clamp-2 mb-2 min-h-[2.5em] group-hover:text-[#c48b94] transition-colors">
+          <h3 className="text-xs md:text-sm text-[#4a4042] font-medium leading-snug line-clamp-2 mb-2 min-h-[2.5em] group-hover:text-[#c48b94] transition-colors">
             {product.name}
           </h3>
 
           {/* Price Section */}
           <div className="mt-auto">
-            <div className="flex items-baseline gap-2 flex-wrap mb-1">
-              <span className="text-[#c48b94] font-bold text-lg">
+            <div className={`flex items-baseline gap-1 md:gap-2 flex-wrap mb-1`}>
+              <span className="text-[#c48b94] font-bold text-sm md:text-lg">
                 Rp{product.price.toLocaleString('id-ID')}
               </span>
-              <span className="text-xs text-gray-400 line-through decoration-1">
-                Rp{originalPrice.toLocaleString('id-ID', { maximumFractionDigits: 0 })}
-              </span>
+              {product.originalPrice && product.originalPrice > product.price && (
+                <span className="text-[10px] md:text-xs text-gray-400 line-through decoration-1">
+                  Rp{product.originalPrice.toLocaleString('id-ID')}
+                </span>
+              )}
             </div>
 
             {/* Rating & Sold */}

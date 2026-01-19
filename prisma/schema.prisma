@@ -21,6 +21,8 @@ model Product {
   name        String
   description String?
   price       Int
+  originalPrice Int?         // Harga asli/coret
+  label       String?        // Custom label (e.g. Best Seller, New Arrival)
   stock       Int            @default(0)
   isBestSeller Boolean       @default(false)
   shopeeUrl   String?        // Link to Shopee product

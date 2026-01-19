@@ -48,9 +48,8 @@ export default function Navbar({ categories = [] }) {
 
   return (
     <>
-      {/* Placeholder to prevent layout shift */}
-      <div className="h-[120px] w-full block"></div>
-      src/app/favicon.ico
+      {/* Placeholder to prevent layout shift - reduced for mobile */}
+      <div className="h-[70px] lg:h-[120px] w-full block"></div>
       <CustomerLoginModal
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
@@ -74,7 +73,7 @@ export default function Navbar({ categories = [] }) {
                 {/* Logo Placeholder */}
                 <div className="hidden lg:block relative w-20 h-20">
                   <Image
-                    src="/img/logo.png"
+                    src="/img/logo1.png"
                     alt="Logo"
                     fill
                     className="object-contain"
@@ -85,9 +84,9 @@ export default function Navbar({ categories = [] }) {
               {/* Logo (Center) */}
               <div className="flex-1 flex justify-center py-2">
                 <Link href="/" className="flex flex-col items-center">
-                  {/* Mobile Logo Image */}
-                  <div className="lg:hidden relative w-20 h-20">
-                    <Image src="/img/logo.JPEG" alt="Logo" fill className="object-contain" />
+                  {/* Mobile Logo Image - Smaller on mobile */}
+                  <div className="lg:hidden relative w-12 h-12">
+                    <Image src="/img/logo1.png" alt="Logo" fill className="object-contain" />
                   </div>
 
                   {/* Desktop Logo Text */}
