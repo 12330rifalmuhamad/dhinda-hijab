@@ -1,6 +1,8 @@
 
 export const dynamic = 'force-dynamic';
 
+
+import Image from 'next/image';
 import prisma from '@/lib/prisma';
 import HeroSection from '@/components/HeroSection';
 import MostWantedSection from '@/components/homepage/MostWantedSection';
@@ -115,11 +117,15 @@ export default async function HomePage() {
               return <OfflineStoreSection />;
             case 'BANNER':
               return (
-                <div className="w-full relative aspect-[16/6] mb-12">
-                  {/* Basic banner implementation - improve as needed */}
-                  <div
-                    className="w-full h-full bg-center bg-cover"
-                    style={{ backgroundImage: `url(${section.content?.imageUrl})` }}
+                <div className="w-full mb-12">
+                  <Image
+                    src={section.content?.imageUrl}
+                    alt={section.title || "Banner"}
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="w-full h-auto"
+                    unoptimized={true} // Safe fallback for external URLs
                   />
                 </div>
               );
