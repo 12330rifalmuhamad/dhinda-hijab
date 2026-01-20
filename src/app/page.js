@@ -12,6 +12,7 @@ import ShopTheLookSection from '@/components/homepage/ShopTheLookSection';
 import ArticlesSection from '@/components/homepage/ArticlesSection';
 import TestimonySection from '@/components/homepage/TestimonySection';
 import GallerySection from '@/components/homepage/GallerySection';
+import SocialLinksSection from '@/components/homepage/SocialLinksSection';
 import FloatingButtons from '@/components/FloatingButtons';
 
 // Helper functions for data fetching
@@ -141,6 +142,8 @@ export default async function HomePage() {
                 ? section.content.images
                 : products.flatMap(p => p.images || []);
               return <GallerySection images={galleryImages} />;
+            case 'SOCIAL_LINKS':
+              return <SocialLinksSection data={section} />;
             default:
               return null;
           }

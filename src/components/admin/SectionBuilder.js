@@ -13,6 +13,7 @@ const SECTION_Types = [
   { value: 'ARTICLES', label: 'Latest Articles / Stories' },
   { value: 'TESTIMONY', label: 'Customer Testimonies' },
   { value: 'GALLERY', label: 'Collage Gallery' },
+  { value: 'SOCIAL_LINKS', label: 'Social Media & Marketplace' },
 ];
 
 export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
@@ -848,6 +849,115 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {formData.type === 'SOCIAL_LINKS' && (
+          <div className="bg-gray-50 p-4 rounded-lg border space-y-6">
+            <h3 className="text-sm font-medium mb-2 text-gray-500">Social Links & Marketplace</h3>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-medium text-gray-700">Links ({formData.content?.links?.length || 0})</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newLink = { id: Date.now(), name: '', url: '', icon: '' };
+                    const current = formData.content?.links || [];
+                    handleContentChange('links', [...current, newLink]);
+                  }}
+                  className="text-xs bg-[#dca5ad] text-white px-3 py-1.5 rounded hover:bg-[#c48b94]"
+                >
+                  + Add Link
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 max-h-[400px] overflow-y-auto pr-2">
+                {(formData.content?.links || []).map((link, index) => (
+                  <div key={link.id || index} className="bg-white p-4 rounded border relative group">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newLinks = formData.content.links.filter((_, i) => i !== index);
+                        handleContentChange('links', newLinks);
+                      }}
+                      className="absolute top-2 right-2 text-red-400 hover:text-red-600 p-1"
+                    >
+                      <X size={16} />
+                    </button>
+
+                    <h4 className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">Link #{index + 1}</h4>
+
+                    <div className="flex gap-4">
+                      {/* Icon */}
+                      <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden relative flex-shrink-0 border flex items-center justify-center">
+                        {link.icon ? (
+                          <Image src={link.icon} alt="Icon" fill className="object-cover" />
+                        ) : (
+                          <div className="flex flex-col items-center justify-center text-gray-300">
+                            <Upload size={16} />
+                            <span className="text-[9px] mt-1">Icon</span>
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          id={`link-icon-${index}`}
+                          className="hidden"
+                          accept="image/*"
+                          onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const data = new FormData();
+                            data.append('file', file);
+                            const res = await fetch('/api/upload', { method: 'POST', body: data });
+                            const json = await res.json();
+                            if (res.ok) {
+                              const newLinks = [...formData.content.links];
+                              newLinks[index].icon = json.url;
+                              handleContentChange('links', newLinks);
+                            }
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => document.getElementById(`link-icon-${index}`).click()}
+                          className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors"
+                        />
+                      </div>
+
+                      {/* Inputs */}
+                      <div className="flex-1 space-y-3">
+                        <input
+                          placeholder="Platform Name (e.g. Shopee)"
+                          className="text-sm border rounded px-2 py-1 w-full"
+                          value={link.name || ''}
+                          onChange={(e) => {
+                            const newLinks = [...formData.content.links];
+                            newLinks[index].name = e.target.value;
+                            handleContentChange('links', newLinks);
+                          }}
+                        />
+                        <input
+                          placeholder="URL (https://...)"
+                          className="text-sm border rounded px-2 py-1 w-full"
+                          value={link.url || ''}
+                          onChange={(e) => {
+                            const newLinks = [...formData.content.links];
+                            newLinks[index].url = e.target.value;
+                            handleContentChange('links', newLinks);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {(!formData.content?.links || formData.content.links.length === 0) && (
+                  <div className="text-center py-8 text-gray-400 bg-white rounded border border-dashed">
+                    No links added yet.
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
