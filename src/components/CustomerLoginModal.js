@@ -38,27 +38,61 @@ export default function CustomerLoginModal({ isOpen, onClose, onLoginSuccess, in
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const endpoint = isRegistering ? '/api/auth/customer/register' : '/api/auth/customer/login';
 
     try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      if (isRegistering) {
+        // Handle Registration
+        const res = await fetch('/api/auth/customer/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (res.ok) {
-        if (onLoginSuccess) {
-          onLoginSuccess(data.user);
+        if (res.ok) {
+          // Auto login after success registration
+          const result = await signIn('credentials', {
+            redirect: false,
+            email: formData.email,
+            password: formData.password,
+          });
+
+          if (result?.error) {
+            alert('Registrasi berhasil, silakan login.');
+            setIsRegistering(false);
+          } else {
+            if (onLoginSuccess) {
+              // For now pass basic data or refetch
+              onLoginSuccess({ email: formData.email });
+            } else {
+              window.location.reload();
+            }
+            onClose();
+            router.refresh();
+          }
         } else {
-          window.location.reload();
+          alert(data.error || 'Terjadi kesalahan saat registrasi');
         }
-        onClose();
-        router.refresh();
       } else {
-        alert(data.error || 'Terjadi kesalahan');
+        // Handle Login via NextAuth
+        const result = await signIn('credentials', {
+          redirect: false,
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (result?.error) {
+          alert('Email atau password salah');
+        } else {
+          if (onLoginSuccess) {
+            onLoginSuccess({ email: formData.email });
+          } else {
+            window.location.reload();
+          }
+          onClose();
+          router.refresh();
+        }
       }
     } catch (error) {
       console.error(error);
