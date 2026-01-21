@@ -3,7 +3,10 @@ import { useState, useRef } from 'react';
 import { Image as ImageIcon, Check, X, Upload } from 'lucide-react';
 import Image from 'next/image';
 
+import { uploadToCloudinary } from '@/lib/cloudinary';
+
 export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
+  // ... (keep state)
   const [formData, setFormData] = useState(initialData || {
     leftTitle: '',
     leftSubtitle: '',
@@ -28,23 +31,12 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
     if (!file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      const data = await res.json();
-      if (res.ok) {
-        setFormData(prev => ({ ...prev, image: data.url }));
-      } else {
-        alert('Upload failed');
-      }
+      const url = await uploadToCloudinary(file);
+      setFormData(prev => ({ ...prev, image: url }));
     } catch (error) {
-      alert('Upload error');
+      console.error(error);
+      alert('Upload failed: ' + error.message);
     } finally {
       setUploading(false);
     }
@@ -71,7 +63,7 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Slide Image</label>
           <div className="flex items-start gap-6">
-            <div 
+            <div
               onClick={() => fileInputRef.current?.click()}
               className="relative w-full aspect-[21/9] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-50 overflow-hidden"
             >
@@ -84,10 +76,10 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
                 </div>
               )}
             </div>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              className="hidden" 
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
               accept="image/*"
               onChange={handleImageUpload}
             />

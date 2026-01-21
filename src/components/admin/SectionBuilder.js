@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, Save, Upload } from 'lucide-react';
 import Image from 'next/image';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 
 const SECTION_Types = [
   { value: 'HERO', label: 'Hero Slider' },
@@ -36,23 +37,12 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
     if (!file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
 
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        handleContentChange('imageUrl', data.url);
-      } else {
-        alert('Upload failed');
-      }
+      const url = await uploadToCloudinary(file);
+      handleContentChange('imageUrl', url);
     } catch (error) {
-      alert('Upload error');
+      alert('Upload failed: ' + error.message);
     } finally {
       setUploading(false);
     }
@@ -63,23 +53,12 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
     if (!file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
 
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        handleContentChange(fieldName, data.url);
-      } else {
-        alert('Upload failed');
-      }
+      const url = await uploadToCloudinary(file);
+      handleContentChange(fieldName, url);
     } catch (error) {
-      alert('Upload error');
+      alert('Upload failed: ' + error.message);
     } finally {
       setUploading(false);
     }
@@ -90,26 +69,15 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
     if (!file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
 
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setFormData(prev => ({
-          ...prev,
-          [field]: data.url
-        }));
-      } else {
-        alert('Upload failed');
-      }
+      const url = await uploadToCloudinary(file);
+      setFormData(prev => ({
+        ...prev,
+        [field]: url
+      }));
     } catch (error) {
-      alert('Upload error');
+      alert('Upload failed: ' + error.message);
     } finally {
       setUploading(false);
     }
@@ -410,15 +378,14 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                                 const file = e.target.files[0];
                                 if (!file) return;
 
-                                const data = new FormData();
-                                data.append('file', file);
-                                const res = await fetch('/api/upload', { method: 'POST', body: data });
-                                const json = await res.json();
-
-                                if (res.ok) {
+                                try {
+                                  const url = await uploadToCloudinary(file);
                                   const updatedLooks = [...formData.content.looks];
-                                  updatedLooks[index].featureImage = json.url;
+                                  updatedLooks[index].featureImage = url;
                                   handleContentChange('looks', updatedLooks);
+                                } catch (err) {
+                                  console.error(err);
+                                  alert('Upload failed');
                                 }
                               }}
                             />
@@ -450,15 +417,14 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                                 const file = e.target.files[0];
                                 if (!file) return;
 
-                                const data = new FormData();
-                                data.append('file', file);
-                                const res = await fetch('/api/upload', { method: 'POST', body: data });
-                                const json = await res.json();
-
-                                if (res.ok) {
+                                try {
+                                  const url = await uploadToCloudinary(file);
                                   const updatedLooks = [...formData.content.looks];
-                                  updatedLooks[index].productImage = json.url;
+                                  updatedLooks[index].productImage = url;
                                   handleContentChange('looks', updatedLooks);
+                                } catch (err) {
+                                  console.error(err);
+                                  alert('Upload failed');
                                 }
                               }}
                             />
@@ -696,14 +662,14 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                           onChange={async (e) => {
                             const file = e.target.files[0];
                             if (!file) return;
-                            const data = new FormData();
-                            data.append('file', file);
-                            const res = await fetch('/api/upload', { method: 'POST', body: data });
-                            const json = await res.json();
-                            if (res.ok) {
+                            try {
+                              const url = await uploadToCloudinary(file);
                               const newItems = [...formData.content.estimoni];
-                              newItems[index].image = json.url;
+                              newItems[index].image = url;
                               handleContentChange('estimoni', newItems);
+                            } catch (err) {
+                              console.error(err);
+                              alert('Upload failed');
                             }
                           }}
                         />
@@ -798,14 +764,9 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                         // Sequential upload for simplicity
                         const newUrls = [];
                         for (const file of files) {
-                          const data = new FormData();
-                          data.append('file', file);
                           try {
-                            const res = await fetch('/api/upload', { method: 'POST', body: data });
-                            if (res.ok) {
-                              const json = await res.json();
-                              newUrls.push({ url: json.url });
-                            }
+                            const url = await uploadToCloudinary(file);
+                            newUrls.push({ url: url });
                           } catch (err) {
                             console.error(err);
                           }
@@ -907,14 +868,14 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                           onChange={async (e) => {
                             const file = e.target.files[0];
                             if (!file) return;
-                            const data = new FormData();
-                            data.append('file', file);
-                            const res = await fetch('/api/upload', { method: 'POST', body: data });
-                            const json = await res.json();
-                            if (res.ok) {
+                            try {
+                              const url = await uploadToCloudinary(file);
                               const newLinks = [...formData.content.links];
-                              newLinks[index].icon = json.url;
+                              newLinks[index].icon = url;
                               handleContentChange('links', newLinks);
+                            } catch (err) {
+                              console.error(err);
+                              alert('Upload failed');
                             }
                           }}
                         />

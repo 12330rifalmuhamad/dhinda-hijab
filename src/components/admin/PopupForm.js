@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Upload, X, Save } from 'lucide-react';
 
+import { uploadToCloudinary } from '@/lib/cloudinary';
+
 export default function PopupForm() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -48,21 +50,13 @@ export default function PopupForm() {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        const uploadData = new FormData();
-        uploadData.append('file', file);
-
         try {
             setLoading(true);
-            const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
-            const data = await res.json();
-            if (res.ok) {
-                setFormData(prev => ({ ...prev, imageUrl: data.url }));
-            } else {
-                alert('Failed to upload image');
-            }
+            const url = await uploadToCloudinary(file);
+            setFormData(prev => ({ ...prev, imageUrl: url }));
         } catch (error) {
             console.error('Upload failed', error);
-            alert('Error uploading image');
+            alert('Upload failed: ' + error.message);
         } finally {
             setLoading(false);
         }
