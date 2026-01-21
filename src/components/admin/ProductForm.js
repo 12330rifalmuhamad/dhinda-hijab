@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Upload, X, Save, ArrowLeft } from 'lucide-react';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 
 export default function ProductForm({ initialData, categories, isEditing = false }) {
   const router = useRouter();
@@ -12,14 +13,14 @@ export default function ProductForm({ initialData, categories, isEditing = false
     name: initialData?.name || '',
     description: initialData?.description || '',
     price: initialData?.price || '',
-    price: initialData?.price || '',
     originalPrice: initialData?.originalPrice || '',
     label: initialData?.label || '',
     shopeeUrl: initialData?.shopeeUrl || '',
     tiktokUrl: initialData?.tiktokUrl || '',
     videoUrl: initialData?.videoUrl || '',
     isBestSeller: initialData?.isBestSeller || false,
-    images: initialData?.images?.map(img => img.url) || []
+    images: initialData?.images?.map(img => img.url) || [],
+    categoryId: initialData?.categoryId || (categories.length > 0 ? categories[0].id : '')
   });
 
 
@@ -33,37 +34,7 @@ export default function ProductForm({ initialData, categories, isEditing = false
     }));
   };
 
-  const uploadFileWithProgress = (file) => {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      const uploadData = new FormData();
-      uploadData.append('file', file);
 
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percentComplete = Math.round((event.loaded / event.total) * 100);
-          setUploadProgress(percentComplete);
-        }
-      };
-
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            resolve(data.url);
-          } catch (e) {
-            reject(new Error('Invalid JSON response'));
-          }
-        } else {
-          reject(new Error('Upload failed'));
-        }
-      };
-
-      xhr.onerror = () => reject(new Error('Upload error'));
-      xhr.open('POST', '/api/upload', true);
-      xhr.send(uploadData);
-    });
-  };
 
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
@@ -73,7 +44,7 @@ export default function ProductForm({ initialData, categories, isEditing = false
 
     for (const file of files) {
       try {
-        const url = await uploadFileWithProgress(file);
+        const url = await uploadToCloudinary(file, setUploadProgress);
         setFormData(prev => ({
           ...prev,
           images: [...prev.images, url]
@@ -265,27 +236,16 @@ export default function ProductForm({ initialData, categories, isEditing = false
                         const file = e.target.files[0];
                         if (!file) return;
 
-                        // Basic loading indicator could be added here
-                        const uploadData = new FormData();
-                        uploadData.append('file', file);
-
                         try {
                           e.target.disabled = true;
-                          const originalText = e.target.parentNode.innerHTML;
-
-                          const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
-                          const data = await res.json();
-                          if (res.ok) {
-                            setFormData(prev => ({ ...prev, videoUrl: data.url }));
-                          } else {
-                            alert('Video upload failed: ' + (data.error || 'Unknown error'));
-                          }
+                          const url = await uploadToCloudinary(file);
+                          setFormData(prev => ({ ...prev, videoUrl: url }));
                         } catch (err) {
                           console.error(err);
-                          alert('Video upload failed');
+                          alert('Video upload failed: ' + err.message);
                         } finally {
                           e.target.disabled = false;
-                          e.target.value = null; // Reset input
+                          e.target.value = null;
                         }
                       }}
                     />
