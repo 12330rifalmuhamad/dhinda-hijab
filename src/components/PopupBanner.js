@@ -22,15 +22,11 @@ export default function PopupBanner() {
 
                     // 2. Check if already dismissed (skip check if on Home Page)
                     const dismissedKey = `popup_dismissed_${data.id}`;
-                    const isDismissed = localStorage.getItem(dismissedKey);
+                    // Use sessionStorage
+                    const isDismissed = sessionStorage.getItem(dismissedKey);
                     console.log('Is Dismissed:', isDismissed, 'Is Home:', isHomePage);
 
-                    // If it's the home page, ALWAYS show it (unless we want to enforce it per session, but request said "always")
-                    // Request: "buatkan agar pertama kali membuka halaman utama, agar selalu menampilkan popup banner"
-                    // Meaning: When opening main page, always show. 
-                    // To avoid it showing on navigating BACK to home, we might want it. 
-                    // But usually "always check" suffices for "startup". 
-                    // The simplest interpretation: Ignore isDismissed if isHomePage.
+
 
                     if (!isDismissed) {
                         setPopup(data);
@@ -49,8 +45,8 @@ export default function PopupBanner() {
         // Wait for animation to finish before removing from DOM (optional, but cleaner)
         setTimeout(() => {
             setPopup(null);
-            // Save dismissal
-            localStorage.setItem(`popup_dismissed_${popup.id}`, 'true');
+            // Save dismissal to sessionStorage
+            sessionStorage.setItem(`popup_dismissed_${popup.id}`, 'true');
         }, 300);
     };
 
