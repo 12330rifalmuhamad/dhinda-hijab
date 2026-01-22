@@ -46,7 +46,7 @@ export default function FloatingButtons() {
       {/* Chat Button (Bottom Right) */}
       {/* Chat Button (Bottom Right) */}
       <motion.a
-        href="https://wa.me/6281234567890?text=Halo, saya ingin bertanya seputar produk Dhinda Hijab"
+        href="https://wa.me/6287747467188?text=Halo, saya ingin bertanya seputar produk Dhinda Hijab"
         target="_blank"
         rel="noopener noreferrer"
         initial={{ scale: 0 }}
