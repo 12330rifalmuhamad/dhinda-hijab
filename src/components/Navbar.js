@@ -95,7 +95,7 @@ export default function Navbar({ categories = [] }) {
                       DHINDA HIJAB
                     </span>
                     <span className="block text-[10px] tracking-[0.4em] text-[#dca5ad] font-medium mt-1 uppercase">
-                      Modern Muslim Wear
+                      Made to Move With You
                     </span>
                   </div>
                 </Link>
