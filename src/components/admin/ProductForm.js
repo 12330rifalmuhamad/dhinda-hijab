@@ -273,7 +273,7 @@ export default function ProductForm({ initialData, categories, isEditing = false
             <div className="flex flex-col gap-4">
               <div className="flex gap-4 items-start">
                 {formData.sizeChart ? (
-                  <div className="relative w-32 aspect-[3/4] bg-white rounded-lg border overflow-hidden">
+                  <div className="relative w-48 aspect-video bg-white rounded-lg border overflow-hidden">
                     <Image src={formData.sizeChart} alt="Size Chart" fill className="object-cover" />
                     <button
                       type="button"
@@ -284,7 +284,7 @@ export default function ProductForm({ initialData, categories, isEditing = false
                     </button>
                   </div>
                 ) : (
-                  <div className="w-32 aspect-[3/4] bg-white rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400">
+                  <div className="w-48 aspect-video bg-white rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400">
                     <span className="text-xs text-center px-2">No Image</span>
                   </div>
                 )}
@@ -317,7 +317,7 @@ export default function ProductForm({ initialData, categories, isEditing = false
                     </div>
                     {formData.sizeChart && <span className="text-xs text-green-600 font-medium">Uploaded</span>}
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">Recommended: Vertical image (Portrait)</p>
+                  <p className="text-xs text-gray-500 mt-2">Recommended: Landscape image (16:9)</p>
                 </div>
               </div>
             </div>

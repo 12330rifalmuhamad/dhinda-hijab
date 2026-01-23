@@ -142,7 +142,7 @@ export default function ProductView({ product }) {
           {product.sizeChart && (
             <div className="mb-10">
               <h3 className="text-sm font-medium text-gray-800 mb-2">Size Chart</h3>
-              <div className="relative w-full max-w-md aspect-[3/4] bg-white rounded-lg border overflow-hidden">
+              <div className="relative w-full max-w-full aspect-video bg-white rounded-lg border overflow-hidden">
                 <Image
                   src={product.sizeChart}
                   alt="Size Chart"
