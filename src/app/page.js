@@ -118,7 +118,7 @@ export default async function HomePage() {
               return <OfflineStoreSection section={section} />;
             case 'BANNER':
               return (
-                <div className="w-full mb-8">
+                <div className="w-full mb-0">
                   <Image
                     src={section.content?.imageUrl}
                     alt={section.title || "Banner"}
