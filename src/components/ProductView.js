@@ -29,7 +29,7 @@ export default function ProductView({ product }) {
   const currentImage = activeImage || allImages[0];
 
   return (
-    <main className="container mx-auto px-4 sm:px-6 py-12 bg-[#FFF8F8]">
+    <main className="container mx-auto px-4 sm:px-6 py-8 bg-[#FFF8F8]">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
         {/* Thumbnails (Desktop: Left Column) */}

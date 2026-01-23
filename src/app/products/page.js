@@ -79,14 +79,14 @@ function ProductsContent() {
 
     return (
         <>
-            <main className="container mx-auto px-4 sm:px-6 py-12 min-h-screen bg-[#fffcfc]">
-                <div className="text-center mb-12">
+            <main className="container mx-auto px-4 sm:px-6 py-8 min-h-screen bg-[#fffcfc]">
+                <div className="text-center mb-8">
                     <h1 className="text-4xl md:text-5xl font-serif text-[#4a4042] mb-4">All Collections</h1>
                     <p className="text-gray-500 font-light">Explore our complete range of premium hijabs and accessories.</p>
                 </div>
 
                 {/* Filters & Search */}
-                <div className="flex flex-col md:flex-row gap-4 mb-8 sticky top-20 z-10 bg-[#fffcfc]/90 backdrop-blur-sm py-4">
+                <div className="flex flex-col md:flex-row gap-4 mb-6 sticky top-20 z-10 bg-[#fffcfc]/90 backdrop-blur-sm py-2">
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                         <input

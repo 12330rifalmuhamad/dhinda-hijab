@@ -6,7 +6,7 @@ export async function GET(request) {
   const categorySlug = searchParams.get('category');
   const search = searchParams.get('search');
   const page = parseInt(searchParams.get('page')) || 1;
-  const limit = parseInt(searchParams.get('limit')) || 12;
+  const limit = parseInt(searchParams.get('limit')) || 1000;
   const sortBy = searchParams.get('sortBy') || 'createdAt';
   const sortOrder = searchParams.get('sortOrder') || 'desc';
   const minPrice = searchParams.get('minPrice');
