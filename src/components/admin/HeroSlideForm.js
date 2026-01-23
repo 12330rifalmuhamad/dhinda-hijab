@@ -13,10 +13,13 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
     rightTitle: '',
     rightSubtitle: '',
     image: '',
+    mobileImage: '',
     isActive: true
   });
   const [uploading, setUploading] = useState(false);
+  const [uploadingMobile, setUploadingMobile] = useState(false);
   const fileInputRef = useRef(null);
+  const mobileFileInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -26,19 +29,22 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
     }));
   };
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async (e, field) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setUploading(true);
+    if (field === 'image') setUploading(true);
+    else setUploadingMobile(true);
+
     try {
       const url = await uploadToCloudinary(file);
-      setFormData(prev => ({ ...prev, image: url }));
+      setFormData(prev => ({ ...prev, [field]: url }));
     } catch (error) {
       console.error(error);
       alert('Upload failed: ' + error.message);
     } finally {
-      setUploading(false);
+      if (field === 'image') setUploading(false);
+      else setUploadingMobile(false);
     }
   };
 
@@ -59,33 +65,61 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Image Upload */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Slide Image</label>
-          <div className="flex items-start gap-6">
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="relative w-full aspect-[21/9] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-50 overflow-hidden"
-            >
-              {formData.image ? (
-                <Image src={formData.image} alt="Preview" fill className="object-cover" />
-              ) : (
-                <div className="flex flex-col items-center text-gray-400">
-                  {uploading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400"></div> : <Upload size={20} />}
-                  <span className="text-xs mt-1">Upload</span>
-                </div>
-              )}
+        {/* Images Upload Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Desktop Image */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Desktop Image (16:9)</label>
+            <div className="flex flex-col gap-2">
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="relative w-full aspect-video bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-50 overflow-hidden"
+              >
+                {formData.image ? (
+                  <Image src={formData.image} alt="Desktop Preview" fill className="object-cover" />
+                ) : (
+                  <div className="flex flex-col items-center text-gray-400">
+                    {uploading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400"></div> : <Upload size={20} />}
+                    <span className="text-xs mt-1">Upload Desktop</span>
+                  </div>
+                )}
+              </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e, 'image')}
+              />
+              <p className="text-xs text-gray-500">Recommended: 1920x1080px or 16:9 ratio</p>
             </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-            <div className="flex-1 text-sm text-gray-500">
-              <p>Recommended size: 3360x940px (Ultra Wide)</p>
-              <p>Note: Mobile will crop to center (Vertical 3:4)</p>
+          </div>
+
+          {/* Mobile Image */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Image (Portrait)</label>
+            <div className="flex flex-col gap-2">
+              <div
+                onClick={() => mobileFileInputRef.current?.click()}
+                className="relative w-full aspect-[3/4] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-50 overflow-hidden max-w-[240px] mx-auto"
+              >
+                {formData.mobileImage ? (
+                  <Image src={formData.mobileImage} alt="Mobile Preview" fill className="object-cover" />
+                ) : (
+                  <div className="flex flex-col items-center text-gray-400">
+                    {uploadingMobile ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400"></div> : <Upload size={20} />}
+                    <span className="text-xs mt-1">Upload Mobile</span>
+                  </div>
+                )}
+              </div>
+              <input
+                type="file"
+                ref={mobileFileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e, 'mobileImage')}
+              />
+              <p className="text-xs text-gray-500 text-center">Recommended: 1080x1440px or 3:4 ratio</p>
             </div>
           </div>
         </div>

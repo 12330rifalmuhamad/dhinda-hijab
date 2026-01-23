@@ -6,7 +6,7 @@ import CategoryCard from '@/components/CategoryCard';
 // Ia menerima 'categories' sebagai prop
 export default function CategoriesSection({ categories }) {
   return (
-    <section id="categories" className="py-12 md:py-20">
+    <section id="categories" className="py-8 md:py-12">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center mb-12">
           <span className="text-sm font-medium text-[#dca5ad] uppercase tracking-[0.2em] mb-3 block">Dhinda Collection</span>

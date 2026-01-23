@@ -7,7 +7,7 @@ import ProductCard from '@/components/ProductCard';
 // Ia menerima 'products' sebagai prop
 export default function MostWantedSection({ products }) {
   return (
-    <section id="most-wanted" className="py-12 md:py-20">
+    <section id="most-wanted" className="py-8 md:py-12">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
           <h2 className="text-2xl md:text-3xl font-serif text-center text-[#4a4042] mb-3 tracking-wide">Best Seller Items</h2>

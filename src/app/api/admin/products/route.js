@@ -33,7 +33,7 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const data = await request.json();
-    const { name, description, price, originalPrice, label, categoryId, shopeeUrl, tiktokUrl, videoUrl, isBestSeller, images } = data;
+    const { name, description, price, originalPrice, label, categoryId, shopeeUrl, tiktokUrl, videoUrl, sizeChart, isBestSeller, images } = data;
 
     const product = await prisma.product.create({
       data: {
@@ -46,17 +46,33 @@ export async function POST(request) {
         shopeeUrl,
         tiktokUrl,
         videoUrl,
+        sizeChart,
         isBestSeller,
-        images: {
-          create: images.map(url => ({ url })),
-        },
+        isBestSeller,
+        // images: { create: ... } // We will do this manually to ensure order
       },
-      include: {
-        images: true,
-      }
     });
 
-    return NextResponse.json(product);
+    // Create images separately to ensure order by manipulating createdAt or just explicit loop
+    if (images && images.length > 0) {
+      let baseTime = new Date().getTime();
+      for (let i = 0; i < images.length; i++) {
+        await prisma.productImage.create({
+          data: {
+            productId: product.id,
+            url: images[i],
+            createdAt: new Date(baseTime + i * 100)
+          }
+        });
+      }
+    }
+
+    const finalProduct = await prisma.product.findUnique({
+      where: { id: product.id },
+      include: { images: { orderBy: { createdAt: 'asc' } } }
+    });
+
+    return NextResponse.json(finalProduct);
   } catch (error) {
     console.error("Create Product Error:", error);
     return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });

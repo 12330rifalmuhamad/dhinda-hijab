@@ -28,7 +28,7 @@ export default function SocialLinksSection({ data }) {
 
     return (
         <section
-            className="py-12 md:py-16 relative overflow-hidden"
+            className="py-8 md:py-12 relative overflow-hidden"
             style={bgStyle}
         >
             {/* Overlay for readability if bg image exists */}

@@ -139,11 +139,39 @@ export default function ProductView({ product }) {
           )}
 
           {/* Size Chart */}
-          <div className="mb-10">
-            <button className="text-sm text-gray-500 underline decoration-gray-300 underline-offset-4 hover:text-black transition-colors">
-              View Size Chart
-            </button>
-          </div>
+          {product.sizeChart && (
+            <div className="mb-10">
+              <button
+                onClick={() => setShowSizeChart(true)}
+                className="text-sm text-gray-500 underline decoration-gray-300 underline-offset-4 hover:text-black transition-colors"
+              >
+                View Size Chart
+              </button>
+            </div>
+          )}
+
+          {/* Size Chart Modal */}
+          {showSizeChart && product.sizeChart && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowSizeChart(false)}>
+              <div className="relative bg-white rounded-lg p-2 max-w-full max-h-[90vh] overflow-auto shadow-2xl animate-fade-in" onClick={e => e.stopPropagation()}>
+                <button
+                  onClick={() => setShowSizeChart(false)}
+                  className="absolute top-2 right-2 p-2 bg-white/80 rounded-full hover:bg-gray-100 transition-colors z-10"
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <div className="relative w-full h-full min-w-[300px] md:min-w-[500px]">
+                  <Image
+                    src={product.sizeChart}
+                    alt="Size Chart"
+                    width={600}
+                    height={800}
+                    className="w-full h-auto object-contain rounded"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-3">

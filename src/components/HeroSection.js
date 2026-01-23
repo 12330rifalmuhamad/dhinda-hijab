@@ -42,7 +42,7 @@ export default function HeroSection() {
   ];
 
   return (
-    <div className="relative w-full h-[500px] md:h-auto md:aspect-[16/6] overflow-hidden bg-[#e8d5b5]">
+    <div className="relative w-full h-[600px] md:h-auto md:aspect-video overflow-hidden bg-[#e8d5b5]">
       <Swiper
         modules={[Autoplay, EffectFade, Pagination, Navigation]}
         effect="fade"
@@ -58,13 +58,28 @@ export default function HeroSection() {
               <div className="relative w-full h-full">
                 {/* Background Image */}
                 <div className="absolute inset-0 w-full h-full">
-                  <Image
-                    src={slide.image}
-                    alt={slide.leftSubtitle}
-                    fill
-                    className="object-cover object-center"
-                    priority={slide.id === displaySlides[0].id}
-                  />
+                  {/* Desktop Image (Hidden on Mobile) */}
+                  <div className="hidden md:block w-full h-full relative">
+                    <Image
+                      src={slide.image}
+                      alt={slide.leftTitle || "Hero Slide"}
+                      fill
+                      className="object-cover object-center"
+                      priority={slide.id === displaySlides[0].id}
+                    />
+                  </div>
+
+                  {/* Mobile Image (Visible only on Mobile) */}
+                  <div className="block md:hidden w-full h-full relative">
+                    <Image
+                      src={slide.mobileImage || slide.image}
+                      alt={slide.leftTitle || "Hero Slide"}
+                      fill
+                      className="object-cover object-center"
+                      priority={slide.id === displaySlides[0].id}
+                    />
+                  </div>
+
                   <div className="absolute inset-0 bg-black/10"></div> {/* Mild Overlay for text readability */}
                 </div>
 

@@ -29,6 +29,7 @@ model Product {
   tiktokUrl   String?        // Link to TikTok Shop product
   material    String?        // Product material (e.g. Katun Bordir)
   videoUrl    String?        // URL to product video (e.g. cloudinary)
+  sizeChart   String?        // URL to size chart image
   images      ProductImage[]
   categoryId  String
   category    Category       @relation(fields: [categoryId], references: [id])
@@ -98,6 +99,7 @@ model OrderItem {
 model HeroSlide {
   id            String   @id @default(cuid())
   image         String
+  mobileImage   String?
   leftTitle     String
   leftSubtitle  String
   rightTitle    String

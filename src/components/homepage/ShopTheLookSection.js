@@ -39,7 +39,7 @@ export default function ShopTheLookSection({ section }) {
   const currentLook = looks[currentIndex];
 
   return (
-    <section className="relative w-full py-10 md:py-24 px-[5%] md:px-[10%] overflow-hidden">
+    <section className="relative w-full py-8 md:py-12 px-[5%] md:px-[10%] overflow-hidden">
       {/* Title */}
       <motion.div
         className="text-center mb-12"
