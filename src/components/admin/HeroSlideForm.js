@@ -18,6 +18,7 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
   });
   const [uploading, setUploading] = useState(false);
   const [uploadingMobile, setUploadingMobile] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef(null);
   const mobileFileInputRef = useRef(null);
 
@@ -35,9 +36,10 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
 
     if (field === 'image') setUploading(true);
     else setUploadingMobile(true);
+    setUploadProgress(0);
 
     try {
-      const url = await uploadToCloudinary(file);
+      const url = await uploadToCloudinary(file, setUploadProgress);
       setFormData(prev => ({ ...prev, [field]: url }));
     } catch (error) {
       console.error(error);
@@ -45,6 +47,7 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
     } finally {
       if (field === 'image') setUploading(false);
       else setUploadingMobile(false);
+      setUploadProgress(0);
     }
   };
 
@@ -72,15 +75,35 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
             <label className="block text-sm font-medium text-gray-700 mb-2">Desktop Image (16:9)</label>
             <div className="flex flex-col gap-2">
               <div
-                onClick={() => fileInputRef.current?.click()}
-                className="relative w-full aspect-video bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-50 overflow-hidden"
+                onClick={() => {
+                  if (!formData.image) fileInputRef.current?.click();
+                }}
+                className="relative w-full aspect-video bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center hover:bg-gray-50 overflow-hidden group"
               >
                 {formData.image ? (
-                  <Image src={formData.image} alt="Desktop Preview" fill className="object-cover" />
+                  <>
+                    <Image src={formData.image} alt="Desktop Preview" fill className="object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
+                      className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white"
+                    >
+                      <X size={32} />
+                    </button>
+                  </>
                 ) : (
                   <div className="flex flex-col items-center text-gray-400">
-                    {uploading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400"></div> : <Upload size={20} />}
-                    <span className="text-xs mt-1">Upload Desktop</span>
+                    {uploading ? (
+                      <div className="flex flex-col items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#dca5ad] mb-2"></div>
+                        <span className="text-xs font-medium">{uploadProgress}% Uploading...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <Upload size={20} />
+                        <span className="text-xs mt-1">Upload Desktop</span>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -100,15 +123,35 @@ export default function HeroSlideForm({ initialData, onSubmit, onCancel }) {
             <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Image (Portrait)</label>
             <div className="flex flex-col gap-2">
               <div
-                onClick={() => mobileFileInputRef.current?.click()}
-                className="relative w-full aspect-[3/4] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-50 overflow-hidden max-w-[240px] mx-auto"
+                onClick={() => {
+                  if (!formData.mobileImage) mobileFileInputRef.current?.click();
+                }}
+                className="relative w-full aspect-[3/4] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center hover:bg-gray-50 overflow-hidden max-w-[240px] mx-auto group"
               >
                 {formData.mobileImage ? (
-                  <Image src={formData.mobileImage} alt="Mobile Preview" fill className="object-cover" />
+                  <>
+                    <Image src={formData.mobileImage} alt="Mobile Preview" fill className="object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, mobileImage: '' }))}
+                      className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white"
+                    >
+                      <X size={32} />
+                    </button>
+                  </>
                 ) : (
                   <div className="flex flex-col items-center text-gray-400">
-                    {uploadingMobile ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400"></div> : <Upload size={20} />}
-                    <span className="text-xs mt-1">Upload Mobile</span>
+                    {uploadingMobile ? (
+                      <div className="flex flex-col items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#dca5ad] mb-2"></div>
+                        <span className="text-xs font-medium">{uploadProgress}% Uploading...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <Upload size={20} />
+                        <span className="text-xs mt-1">Upload Mobile</span>
+                      </>
+                    )}
                   </div>
                 )}
               </div>

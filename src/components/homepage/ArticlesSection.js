@@ -13,7 +13,7 @@ export default function ArticlesSection({ articles, title }) {
   if (!articles || articles.length === 0) return null;
 
   return (
-    <section className="py-12 bg-[#fffafa]">
+    <section className="py-12">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

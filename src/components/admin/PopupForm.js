@@ -9,6 +9,8 @@ import { uploadToCloudinary } from '@/lib/cloudinary';
 export default function PopupForm() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
     const [fetching, setFetching] = useState(true);
     const [formData, setFormData] = useState({
         id: '',
@@ -51,14 +53,16 @@ export default function PopupForm() {
         if (!file) return;
 
         try {
-            setLoading(true);
-            const url = await uploadToCloudinary(file);
+            setUploading(true);
+            setUploadProgress(0);
+            const url = await uploadToCloudinary(file, setUploadProgress);
             setFormData(prev => ({ ...prev, imageUrl: url }));
         } catch (error) {
             console.error('Upload failed', error);
             alert('Upload failed: ' + error.message);
         } finally {
-            setLoading(false);
+            setUploading(false);
+            setUploadProgress(0);
         }
     };
 
@@ -120,11 +124,22 @@ export default function PopupForm() {
                         </div>
                     ) : (
                         <div
-                            onClick={() => fileInputRef.current?.click()}
-                            className="aspect-video w-full rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors text-gray-400"
+                            onClick={() => {
+                                if (!formData.imageUrl) fileInputRef.current?.click();
+                            }}
+                            className="aspect-video w-full rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors text-gray-400 group"
                         >
-                            <Upload size={32} />
-                            <span className="text-sm mt-2">Click to Upload Banner</span>
+                            {uploading ? (
+                                <div className="flex flex-col items-center">
+                                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#dca5ad] mb-2"></div>
+                                    <span className="text-sm font-medium">{uploadProgress}% Uploading...</span>
+                                </div>
+                            ) : (
+                                <>
+                                    <Upload size={32} />
+                                    <span className="text-sm mt-2">Click to Upload Banner</span>
+                                </>
+                            )}
                         </div>
                     )}
 

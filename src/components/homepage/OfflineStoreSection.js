@@ -8,7 +8,7 @@ export default function OfflineStoreSection({ section }) {
   const stores = section?.content?.stores || storeLocations;
 
   return (
-    <section id="offline-store" className="py-8 md:py-12 bg-soft-pink-50">
+    <section id="offline-store" className="py-8 md:py-12">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -10,32 +10,8 @@ export default function SocialLinksSection({ data }) {
     }
 
     const { links } = data.content;
-    const { backgroundColor, gradientStart, gradientEnd, backgroundImage, title, subtitle } = data;
-
-    // Background Style
-    const bgStyle = {};
-    if (backgroundImage) {
-        bgStyle.backgroundImage = `url(${backgroundImage})`;
-        bgStyle.backgroundSize = 'cover';
-        bgStyle.backgroundPosition = 'center';
-    } else if (gradientStart && gradientEnd) {
-        bgStyle.background = `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`;
-    } else if (backgroundColor) {
-        bgStyle.backgroundColor = backgroundColor;
-    } else {
-        bgStyle.backgroundColor = '#ffffff';
-    }
-
     return (
-        <section
-            className="py-8 md:py-12 relative overflow-hidden"
-            style={bgStyle}
-        >
-            {/* Overlay for readability if bg image exists */}
-            {backgroundImage && (
-                <div className="absolute inset-0 bg-black/20 z-0"></div>
-            )}
-
+        <section className="py-8 md:py-12 relative overflow-hidden">
             <div className="container mx-auto px-4 relative z-10">
 
                 {/* Section Header */}

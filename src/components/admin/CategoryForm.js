@@ -9,6 +9,8 @@ import { uploadToCloudinary } from '@/lib/cloudinary';
 export default function CategoryForm({ initialData, isEditing = false }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     imageUrl: initialData?.imageUrl || '',
@@ -29,7 +31,9 @@ export default function CategoryForm({ initialData, isEditing = false }) {
     if (!file) return;
 
     try {
-      const url = await uploadToCloudinary(file);
+      setUploading(true);
+      setUploadProgress(0);
+      const url = await uploadToCloudinary(file, setUploadProgress);
       setFormData(prev => ({
         ...prev,
         imageUrl: url
@@ -37,6 +41,9 @@ export default function CategoryForm({ initialData, isEditing = false }) {
     } catch (error) {
       console.error('Upload failed', error);
       alert('Upload failed: ' + error.message);
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -116,11 +123,22 @@ export default function CategoryForm({ initialData, isEditing = false }) {
               </>
             ) : (
               <div
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => {
+                  if (!formData.imageUrl) fileInputRef.current?.click();
+                }}
                 className="w-full h-full bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors text-gray-400"
               >
-                <Upload size={24} />
-                <span className="text-xs mt-2">Upload Image</span>
+                {uploading ? (
+                  <div className="flex flex-col items-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#dca5ad] mb-2"></div>
+                    <span className="text-xs font-medium">{uploadProgress}% Uploading...</span>
+                  </div>
+                ) : (
+                  <>
+                    <Upload size={24} />
+                    <span className="text-xs mt-2">Upload Image</span>
+                  </>
+                )}
               </div>
             )}
           </div>

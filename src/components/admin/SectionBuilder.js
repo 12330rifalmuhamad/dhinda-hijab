@@ -30,6 +30,7 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
     isActive: true
   });
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef(null);
 
   const handleImageUpload = async (e) => {
@@ -37,14 +38,16 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
     if (!file) return;
 
     setUploading(true);
+    setUploadProgress(0);
 
     try {
-      const url = await uploadToCloudinary(file);
+      const url = await uploadToCloudinary(file, setUploadProgress);
       handleContentChange('imageUrl', url);
     } catch (error) {
       alert('Upload failed: ' + error.message);
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -53,14 +56,16 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
     if (!file) return;
 
     setUploading(true);
+    setUploadProgress(0);
 
     try {
-      const url = await uploadToCloudinary(file);
+      const url = await uploadToCloudinary(file, setUploadProgress);
       handleContentChange(fieldName, url);
     } catch (error) {
       alert('Upload failed: ' + error.message);
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -69,9 +74,10 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
     if (!file) return;
 
     setUploading(true);
+    setUploadProgress(0);
 
     try {
-      const url = await uploadToCloudinary(file);
+      const url = await uploadToCloudinary(file, setUploadProgress);
       setFormData(prev => ({
         ...prev,
         [field]: url
@@ -80,6 +86,7 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
       alert('Upload failed: ' + error.message);
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -285,15 +292,40 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Banner Image</label>
                 <div className="flex items-start gap-6">
                   <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="relative w-full aspect-[21/9] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-50 overflow-hidden"
+                    onClick={() => {
+                      if (!formData.content?.imageUrl) fileInputRef.current?.click();
+                    }}
+                    className="relative w-full aspect-[21/9] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center hover:bg-gray-50 overflow-hidden group"
                   >
                     {formData.content?.imageUrl ? (
-                      <Image src={formData.content.imageUrl} alt="Preview" fill className="object-cover" />
+                      <>
+                        <Image src={formData.content.imageUrl} alt="Preview" fill className="object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleContentChange('imageUrl', '');
+                            }}
+                            className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                          >
+                            <X size={20} />
+                          </button>
+                        </div>
+                      </>
                     ) : (
                       <div className="flex flex-col items-center text-gray-400">
-                        {uploading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400"></div> : <Upload size={20} />}
-                        <span className="text-xs mt-1">Upload Image</span>
+                        {uploading ? (
+                          <div className="flex flex-col items-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#dca5ad] mb-2"></div>
+                            <span className="text-xs font-medium">{uploadProgress}% Uploading...</span>
+                          </div>
+                        ) : (
+                          <>
+                            <Upload size={24} />
+                            <span className="text-xs mt-2">Click to Upload Image</span>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
@@ -365,8 +397,27 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                       <div>
                         <label className="text-xs text-gray-500 block mb-1">Feature Img</label>
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-16 bg-gray-100 rounded overflow-hidden relative border">
-                            {look.featureImage && <Image src={look.featureImage} alt="Feature" fill className="object-cover" />}
+                          <div className="w-12 h-16 bg-gray-100 rounded overflow-hidden relative border group">
+                            {look.featureImage ? (
+                              <>
+                                <Image src={look.featureImage} alt="Feature" fill className="object-cover" />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updatedLooks = [...formData.content.looks];
+                                    updatedLooks[index].featureImage = '';
+                                    handleContentChange('looks', updatedLooks);
+                                  }}
+                                  className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white"
+                                >
+                                  <X size={14} />
+                                </button>
+                              </>
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                {uploading ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div> : <Upload size={14} />}
+                              </div>
+                            )}
                           </div>
                           <div className="flex-1">
                             <input
@@ -378,23 +429,29 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                                 const file = e.target.files[0];
                                 if (!file) return;
 
+                                setUploading(true);
+                                setUploadProgress(0);
                                 try {
-                                  const url = await uploadToCloudinary(file);
+                                  const url = await uploadToCloudinary(file, setUploadProgress);
                                   const updatedLooks = [...formData.content.looks];
                                   updatedLooks[index].featureImage = url;
                                   handleContentChange('looks', updatedLooks);
                                 } catch (err) {
                                   console.error(err);
                                   alert('Upload failed');
+                                } finally {
+                                  setUploading(false);
+                                  setUploadProgress(0);
                                 }
                               }}
                             />
                             <button
                               type="button"
                               onClick={() => document.getElementById(`file-feature-${index}`).click()}
-                              className="text-xs border px-2 py-1 rounded hover:bg-gray-50"
+                              className="text-xs border px-2 py-1 rounded hover:bg-gray-50 flex items-center gap-1"
+                              disabled={uploading}
                             >
-                              Upload
+                              {uploading ? '...' : 'Upload'}
                             </button>
                           </div>
                         </div>
@@ -404,8 +461,27 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                       <div>
                         <label className="text-xs text-gray-500 block mb-1">Product Img</label>
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden relative border">
-                            {look.productImage && <Image src={look.productImage} alt="Product" fill className="object-cover" />}
+                          <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden relative border group">
+                            {look.productImage ? (
+                              <>
+                                <Image src={look.productImage} alt="Product" fill className="object-cover" />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updatedLooks = [...formData.content.looks];
+                                    updatedLooks[index].productImage = '';
+                                    handleContentChange('looks', updatedLooks);
+                                  }}
+                                  className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white"
+                                >
+                                  <X size={14} />
+                                </button>
+                              </>
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                {uploading ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div> : <Upload size={14} />}
+                              </div>
+                            )}
                           </div>
                           <div className="flex-1">
                             <input
@@ -417,23 +493,29 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                                 const file = e.target.files[0];
                                 if (!file) return;
 
+                                setUploading(true);
+                                setUploadProgress(0);
                                 try {
-                                  const url = await uploadToCloudinary(file);
+                                  const url = await uploadToCloudinary(file, setUploadProgress);
                                   const updatedLooks = [...formData.content.looks];
                                   updatedLooks[index].productImage = url;
                                   handleContentChange('looks', updatedLooks);
                                 } catch (err) {
                                   console.error(err);
                                   alert('Upload failed');
+                                } finally {
+                                  setUploading(false);
+                                  setUploadProgress(0);
                                 }
                               }}
                             />
                             <button
                               type="button"
                               onClick={() => document.getElementById(`file-product-${index}`).click()}
-                              className="text-xs border px-2 py-1 rounded hover:bg-gray-50"
+                              className="text-xs border px-2 py-1 rounded hover:bg-gray-50 flex items-center gap-1"
+                              disabled={uploading}
                             >
-                              Upload
+                              {uploading ? '...' : 'Upload'}
                             </button>
                           </div>
                         </div>
@@ -646,12 +728,25 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
 
                     <div className="flex gap-4">
                       {/* Image */}
-                      <div className="w-16 h-16 bg-gray-100 rounded-full overflow-hidden relative flex-shrink-0 border">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full overflow-hidden relative flex-shrink-0 border group">
                         {item.image ? (
-                          <Image src={item.image} alt="User" fill className="object-cover" />
+                          <>
+                            <Image src={item.image} alt="User" fill className="object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newItems = [...formData.content.estimoni];
+                                newItems[index].image = '';
+                                handleContentChange('estimoni', newItems);
+                              }}
+                              className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white"
+                            >
+                              <X size={16} />
+                            </button>
+                          </>
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-gray-300">
-                            <Upload size={16} />
+                            {uploading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400"></div> : <Upload size={16} />}
                           </div>
                         )}
                         <input
@@ -662,22 +757,29 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                           onChange={async (e) => {
                             const file = e.target.files[0];
                             if (!file) return;
+                            setUploading(true);
+                            setUploadProgress(0);
                             try {
-                              const url = await uploadToCloudinary(file);
+                              const url = await uploadToCloudinary(file, setUploadProgress);
                               const newItems = [...formData.content.estimoni];
                               newItems[index].image = url;
                               handleContentChange('estimoni', newItems);
                             } catch (err) {
                               console.error(err);
                               alert('Upload failed');
+                            } finally {
+                              setUploading(false);
+                              setUploadProgress(0);
                             }
                           }}
                         />
-                        <button
-                          type="button"
-                          onClick={() => document.getElementById(`testimony-img-${index}`).click()}
-                          className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors"
-                        />
+                        {!item.image && !uploading && (
+                          <button
+                            type="button"
+                            onClick={() => document.getElementById(`testimony-img-${index}`).click()}
+                            className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors"
+                          />
+                        )}
                       </div>
 
                       {/* Inputs */}
@@ -750,7 +852,10 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <label className="text-sm font-medium text-gray-700">Images ({formData.content?.images?.length || 0})</label>
-                  <div className="relative">
+                  <div className="flex items-center gap-2">
+                    {uploading && uploadProgress > 0 && (
+                      <span className="text-xs text-[#dca5ad] font-medium">{uploadProgress}%</span>
+                    )}
                     <input
                       type="file"
                       id="gallery-upload"
@@ -761,27 +866,40 @@ export default function SectionBuilder({ initialData, onSubmit, onCancel }) {
                         const files = Array.from(e.target.files);
                         if (!files.length) return;
 
-                        // Sequential upload for simplicity
+                        setUploading(true);
+                        setUploadProgress(0);
+
                         const newUrls = [];
                         for (const file of files) {
                           try {
-                            const url = await uploadToCloudinary(file);
+                            const url = await uploadToCloudinary(file, setUploadProgress);
                             newUrls.push({ url: url });
                           } catch (err) {
                             console.error(err);
+                            alert(`Upload failed for ${file.name}`);
                           }
                         }
 
                         const currentImages = formData.content?.images || [];
                         handleContentChange('images', [...currentImages, ...newUrls]);
+                        setUploading(false);
+                        setUploadProgress(0);
                       }}
                     />
                     <button
                       type="button"
                       onClick={() => document.getElementById('gallery-upload').click()}
-                      className="text-xs bg-[#dca5ad] text-white px-3 py-1.5 rounded hover:bg-[#c48b94]"
+                      disabled={uploading}
+                      className="text-xs bg-[#dca5ad] text-white px-3 py-1.5 rounded hover:bg-[#c48b94] disabled:opacity-50 flex items-center gap-2"
                     >
-                      + Upload Images
+                      {uploading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                          Uploading...
+                        </>
+                      ) : (
+                        "+ Upload Images"
+                      )}
                     </button>
                   </div>
                 </div>

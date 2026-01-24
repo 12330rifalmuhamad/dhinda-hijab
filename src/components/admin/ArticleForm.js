@@ -9,6 +9,8 @@ import { uploadToCloudinary } from '@/lib/cloudinary';
 export default function ArticleForm({ initialData, isEditing = false }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
     excerpt: initialData?.excerpt || '',
@@ -31,8 +33,11 @@ export default function ArticleForm({ initialData, isEditing = false }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setUploading(true);
+    setUploadProgress(0);
+
     try {
-      const url = await uploadToCloudinary(file);
+      const url = await uploadToCloudinary(file, setUploadProgress);
       setFormData(prev => ({
         ...prev,
         imageUrl: url
@@ -40,6 +45,9 @@ export default function ArticleForm({ initialData, isEditing = false }) {
     } catch (error) {
       console.error('Upload failed', error);
       alert('Upload failed: ' + error.message);
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -54,8 +62,11 @@ export default function ArticleForm({ initialData, isEditing = false }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setUploading(true);
+    setUploadProgress(0);
+
     try {
-      const url = await uploadToCloudinary(file);
+      const url = await uploadToCloudinary(file, setUploadProgress);
 
       const textarea = document.getElementById('article-content');
       const start = textarea.selectionStart;
@@ -78,6 +89,8 @@ export default function ArticleForm({ initialData, isEditing = false }) {
       if (contentFileInputRef.current) {
         contentFileInputRef.current.value = '';
       }
+      setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -200,8 +213,8 @@ export default function ArticleForm({ initialData, isEditing = false }) {
 
                 <div className="w-[1px] h-6 bg-gray-300 mx-1"></div>
 
-                <button type="button" onClick={() => contentFileInputRef.current?.click()} className="p-1.5 hover:bg-gray-200 rounded text-xs" title="Insert Image">
-                  <ImageIcon size={18} />
+                <button type="button" onClick={() => contentFileInputRef.current?.click()} className="p-1.5 hover:bg-gray-200 rounded text-xs" title="Insert Image" disabled={uploading}>
+                  {uploading ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div> : <ImageIcon size={18} />}
                 </button>
                 <input
                   type="file"
@@ -243,11 +256,22 @@ export default function ArticleForm({ initialData, isEditing = false }) {
                 </>
               ) : (
                 <div
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() => {
+                    if (!formData.imageUrl) fileInputRef.current?.click();
+                  }}
                   className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors text-gray-400"
                 >
-                  <Upload size={24} />
-                  <span className="text-xs mt-2">Upload Cover</span>
+                  {uploading ? (
+                    <div className="flex flex-col items-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#dca5ad] mb-2"></div>
+                      <span className="text-xs font-medium">{uploadProgress}% Uploading...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload size={24} />
+                      <span className="text-xs mt-2">Upload Cover</span>
+                    </>
+                  )}
                 </div>
               )}
             </div>
