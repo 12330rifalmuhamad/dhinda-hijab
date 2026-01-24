@@ -34,8 +34,8 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-playfair), serif;
-  font-weight: 500; /* Lighter weight for minimalist look */
+  /* font-family: var(--font-playfair), serif; - Removed to fix fallback to system serif */
+  /* font-weight: 500; */
   letter-spacing: -0.02em; /* Tighter tracking for headers */
 }
 

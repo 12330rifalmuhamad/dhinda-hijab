@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Instagram, Facebook, Youtube, Mail, Phone, MapPin } from 'lucide-react';
-import { FaCcVisa, FaCcMastercard, FaRegCreditCard } from 'react-icons/fa';
+import { FaCcVisa, FaCcMastercard, FaRegCreditCard, FaTiktok } from 'react-icons/fa';
 import { SiWebmoney } from 'react-icons/si';
 import { usePathname } from 'next/navigation';
 
@@ -15,7 +15,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-gradient-to-br from-soft-pink-900 via-rose-900 to-soft-pink-800 text-soft-pink-100">
+    <footer className="bg-gradient-to-br from-soft-pink-900 via-rose-500 to-soft-pink-800 text-soft-pink-100">
       <div className="container mx-auto px-4 sm:px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
 
@@ -38,7 +38,7 @@ export default function Footer() {
             <div className="mt-6 space-y-2">
               <div className="flex items-center gap-2 text-sm text-soft-pink-200">
                 <Phone size={16} />
-                <span>+62 812-3456-7890</span>
+                <span>+62 857 0080 0439</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-soft-pink-200">
                 <Mail size={16} />
@@ -46,7 +46,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2 text-sm text-soft-pink-200">
                 <MapPin size={16} />
-                <span>Jakarta, Indonesia</span>
+                <span>Karawang, Indonesia</span>
               </div>
             </div>
           </div>
@@ -154,25 +154,18 @@ export default function Footer() {
               <h5 className="text-sm font-semibold text-white mb-3">Ikuti Kami</h5>
               <div className="flex space-x-4">
                 <Link
-                  href="#"
+                  href="https://www.instagram.com/dhinda.hijab/"
                   aria-label="Instagram"
                   className="p-2 bg-soft-pink-800/50 rounded-full hover:bg-brand-primary hover:scale-110 transition-all duration-200"
                 >
                   <Instagram size={20} />
                 </Link>
                 <Link
-                  href="#"
-                  aria-label="Facebook"
+                  href="https://www.tiktok.com/@dhindahijab"
+                  aria-label="Tiktok"
                   className="p-2 bg-soft-pink-800/50 rounded-full hover:bg-brand-primary hover:scale-110 transition-all duration-200"
                 >
-                  <Facebook size={20} />
-                </Link>
-                <Link
-                  href="#"
-                  aria-label="YouTube"
-                  className="p-2 bg-soft-pink-800/50 rounded-full hover:bg-brand-primary hover:scale-110 transition-all duration-200"
-                >
-                  <Youtube size={20} />
+                  <FaTiktok size={20} />
                 </Link>
               </div>
             </div>

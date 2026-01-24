@@ -19,7 +19,7 @@ import FloatingButtons from '@/components/FloatingButtons';
 async function getArticles() {
   try {
     return await prisma.article.findMany({
-      take: 3,
+      take: 6,
       orderBy: { createdAt: 'desc' }
     });
   } catch (error) {

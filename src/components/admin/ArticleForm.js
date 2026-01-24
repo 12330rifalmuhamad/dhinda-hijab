@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Upload, X, Save, ArrowLeft } from 'lucide-react';
+import { Upload, X, Save, ArrowLeft, Image as ImageIcon } from 'lucide-react';
 
 import { uploadToCloudinary } from '@/lib/cloudinary';
 
@@ -17,6 +17,7 @@ export default function ArticleForm({ initialData, isEditing = false }) {
   });
 
   const fileInputRef = useRef(null);
+  const contentFileInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,6 +48,37 @@ export default function ArticleForm({ initialData, isEditing = false }) {
       ...prev,
       imageUrl: ''
     }));
+  };
+
+  const handleContentImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const url = await uploadToCloudinary(file);
+
+      const textarea = document.getElementById('article-content');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = formData.content;
+      const before = text.substring(0, start);
+      const after = text.substring(end, text.length);
+
+      // Insert image tag with standard formatting
+      const imgTag = `<img src="${url}" alt="Article Image" class="w-full h-auto my-6 rounded-lg shadow-md" />`;
+
+      const newText = before + (before.endsWith('\n') || before === '' ? '' : '\n') + imgTag + (after.startsWith('\n') || after === '' ? '' : '\n') + after;
+
+      handleChange({ target: { name: 'content', value: newText } });
+    } catch (error) {
+      console.error('Content image upload failed', error);
+      alert('Upload failed: ' + error.message);
+    } finally {
+      // Create new ref to clear selection
+      if (contentFileInputRef.current) {
+        contentFileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -165,6 +197,19 @@ export default function ArticleForm({ initialData, isEditing = false }) {
                   const newText = before + '<p>' + text.substring(start, end) + '</p>' + after;
                   handleChange({ target: { name: 'content', value: newText } });
                 }} className="p-1.5 hover:bg-gray-200 rounded text-xs" title="Paragraph">P</button>
+
+                <div className="w-[1px] h-6 bg-gray-300 mx-1"></div>
+
+                <button type="button" onClick={() => contentFileInputRef.current?.click()} className="p-1.5 hover:bg-gray-200 rounded text-xs" title="Insert Image">
+                  <ImageIcon size={18} />
+                </button>
+                <input
+                  type="file"
+                  ref={contentFileInputRef}
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleContentImageUpload}
+                />
               </div>
               <textarea
                 id="article-content"

@@ -166,16 +166,14 @@ export const DEFAULTS = {
 
 // Social Media Links
 export const SOCIAL_LINKS = {
-  INSTAGRAM: 'https://instagram.com/dhindahijab',
-  FACEBOOK: 'https://facebook.com/dhindahijab',
-  YOUTUBE: 'https://youtube.com/@dhindahijab',
-  TIKTOK: 'https://tiktok.com/@dhindahijab',
+  INSTAGRAM: 'https://www.instagram.com/dhinda.hijab/',
+  TIKTOK: 'https://www.tiktok.com/@dhindahijab',
 };
 
 // Contact Information
 export const CONTACT = {
   EMAIL: 'info@dhindahijab.com',
-  PHONE: '+62 812-3456-7890',
-  WHATSAPP: '+62 812-3456-7890',
-  ADDRESS: 'Jakarta, Indonesia',
+  PHONE: '+62 857 0080 0439',
+  WHATSAPP: '+62 857 0080 0439',
+  ADDRESS: 'Karawang, Indonesia',
 };

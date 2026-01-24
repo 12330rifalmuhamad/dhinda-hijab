@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Star, Flame, Truck, MapPin } from 'lucide-react';
+import { Star, Flame, MapPin } from 'lucide-react';
 
 export default function ProductCard({ product, index }) {
   const cardVariants = {
@@ -48,12 +48,6 @@ export default function ProductCard({ product, index }) {
                 <span>{product.label}</span>
               </div>
             )}
-
-            {/* XTRA Badge - Soft Green/Teal converted to Soft Pink/Sage */}
-            <div className="backdrop-blur-md bg-white/80 border border-pink-100 text-[#c48b94] text-[10px] font-medium px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
-              <Truck className="w-3 h-3 text-[#dca5ad]" />
-              <span>Free Shipping</span>
-            </div>
           </div>
 
           {/* Bottom Overlay - Soft Gradient */}
