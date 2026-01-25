@@ -27,7 +27,7 @@ export default function GallerySection({ images = [] }) {
     const galleryImages = images.slice(0, 6);
 
     return (
-        <section className="py-12 bg-white overflow-hidden">
+        <section className="py-12 overflow-hidden">
             <div className="container mx-auto px-4 md:px-6">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
