@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Image as ImageIcon, LogOut, Layers, ShoppingBag, Tag, BookOpen, Megaphone, Users, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Image as ImageIcon, LogOut, Layers, ShoppingBag, Tag, BookOpen, Megaphone, Users, Menu, X, Ticket } from 'lucide-react';
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
@@ -21,6 +21,7 @@ export default function AdminLayout({ children }) {
     { name: 'Products', href: '/admin/products', icon: ShoppingBag },
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Categories', href: '/admin/categories', icon: Tag },
+    { name: 'Vouchers', href: '/admin/vouchers', icon: Ticket },
     { name: 'Articles', href: '/admin/articles', icon: BookOpen },
   ];
 

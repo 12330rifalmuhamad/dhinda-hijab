@@ -107,7 +107,7 @@ export default function GallerySection({ images = [] }) {
                 </motion.div>
 
                 <div className="mt-8 text-center md:hidden">
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-pink-500 hover:text-pink-600 transition-colors">
+                    <a href="https://www.instagram.com/dhinda.hijab/" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-pink-500 hover:text-pink-600 transition-colors">
                         View on Instagram &rarr;
                     </a>
                 </div>
