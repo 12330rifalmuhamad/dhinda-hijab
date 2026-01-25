@@ -126,7 +126,8 @@ export default function ProductForm({ initialData, categories, isEditing = false
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#dca5ad] outline-none"
             >
-              {categories.map(cat => (
+              <option value="">Select Category</option>
+              {categories && categories.length > 0 && categories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>

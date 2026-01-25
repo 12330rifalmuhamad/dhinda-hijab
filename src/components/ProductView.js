@@ -184,7 +184,7 @@ export default function ProductView({ product }) {
             )}
 
             <a
-              href={`https://wa.me/6281234567890?text=Halo, saya tertarik dengan produk ${product.name}`}
+              href={`https://wa.me/6287747467188?text=Halo, saya tertarik dengan produk ${product.name}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center gap-3 bg-[#25D366] text-white py-3.5 rounded-sm hover:bg-[#20b85a] transition-all font-medium tracking-widest uppercase text-xs shadow-sm hover:shadow-md"

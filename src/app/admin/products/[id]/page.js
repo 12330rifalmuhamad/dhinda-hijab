@@ -25,7 +25,11 @@ export default async function EditProductPage({ params }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="container mx-auto px-6 py-8">
-        <ProductForm initialData={product} categories={categories} isEditing />
+        <ProductForm
+          initialData={JSON.parse(JSON.stringify(product))}
+          categories={JSON.parse(JSON.stringify(categories))}
+          isEditing
+        />
       </main>
     </div>
   );

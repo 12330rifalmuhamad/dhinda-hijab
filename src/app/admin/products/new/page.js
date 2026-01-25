@@ -4,7 +4,10 @@ import ProductForm from '@/components/admin/ProductForm';
 export default async function NewProductPage() {
   let categories = [];
   try {
-    categories = await prisma.category.findMany({ orderBy: { name: 'asc' } });
+    categories = await prisma.category.findMany({
+      orderBy: { name: 'asc' },
+      select: { id: true, name: true }
+    });
   } catch (error) {
     console.error("Failed to fetch categories:", error);
   }
