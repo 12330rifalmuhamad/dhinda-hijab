@@ -9,7 +9,8 @@ export default function SocialLinksSection({ data }) {
         return null;
     }
 
-    const { links } = data.content;
+    const { links, subtitle } = data.content;
+    const { title } = data;
     return (
         <section className="py-8 md:py-12 relative overflow-hidden">
             <div className="container mx-auto px-4 relative z-10">
