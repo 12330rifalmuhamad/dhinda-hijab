@@ -21,28 +21,53 @@ export default function HeroSection({ products }) {
   return (
     <section className="container mx-auto px-4 sm:px-6 pt-8">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 h-[60vh]">
-        
+
         {/* Link & Gambar dinamis ke produk pertama */}
         <Link href={`/produk/${products[0].id}`} className="col-span-2 row-span-2 block relative rounded-lg overflow-hidden group">
-          <Image src={getImageUrl(products[0])} alt={products[0].name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" priority />
+          <Image
+            src={getImageUrl(products[0])}
+            alt={products[0].name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
           <div className="absolute inset-0 bg-black/20"></div>
         </Link>
-        
+
         {/* Link & Gambar dinamis ke produk kedua */}
         <Link href={`/produk/${products[1].id}`} className="block relative rounded-lg overflow-hidden group">
-          <Image src={getImageUrl(products[1])} alt={products[1].name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+          <Image
+            src={getImageUrl(products[1])}
+            alt={products[1].name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
           <div className="absolute inset-0 bg-black/10"></div>
         </Link>
-        
+
         {/* Link & Gambar dinamis ke produk ketiga */}
         <Link href={`/produk/${products[2].id}`} className="block relative rounded-lg overflow-hidden group">
-          <Image src={getImageUrl(products[2])} alt={products[2].name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+          <Image
+            src={getImageUrl(products[2])}
+            alt={products[2].name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
           <div className="absolute inset-0 bg-black/10"></div>
         </Link>
-        
+
         {/* Link & Gambar dinamis ke produk keempat */}
         <Link href={`/produk/${products[3].id}`} className="col-span-2 block relative rounded-lg overflow-hidden group">
-          <Image src={getImageUrl(products[3])} alt={products[3].name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+          <Image
+            src={getImageUrl(products[3])}
+            alt={products[3].name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
           <div className="absolute inset-0 bg-black/10"></div>
         </Link>
 

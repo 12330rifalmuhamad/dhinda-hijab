@@ -3,17 +3,20 @@ export const dynamic = 'force-dynamic';
 
 
 import Image from 'next/image';
+import nextDynamic from 'next/dynamic';
 import prisma from '@/lib/prisma';
 import HeroSection from '@/components/HeroSection';
 import MostWantedSection from '@/components/homepage/MostWantedSection';
 import CategoriesSection from '@/components/homepage/CategoriesSection';
-import OfflineStoreSection from '@/components/homepage/OfflineStoreSection';
-import ShopTheLookSection from '@/components/homepage/ShopTheLookSection';
-import ArticlesSection from '@/components/homepage/ArticlesSection';
-import TestimonySection from '@/components/homepage/TestimonySection';
-import GallerySection from '@/components/homepage/GallerySection';
-import SocialLinksSection from '@/components/homepage/SocialLinksSection';
 import FloatingButtons from '@/components/FloatingButtons';
+
+// Dynamic Imports for below-the-fold content
+const OfflineStoreSection = nextDynamic(() => import('@/components/homepage/OfflineStoreSection'));
+const ShopTheLookSection = nextDynamic(() => import('@/components/homepage/ShopTheLookSection'));
+const ArticlesSection = nextDynamic(() => import('@/components/homepage/ArticlesSection'));
+const TestimonySection = nextDynamic(() => import('@/components/homepage/TestimonySection'));
+const GallerySection = nextDynamic(() => import('@/components/homepage/GallerySection'));
+const SocialLinksSection = nextDynamic(() => import('@/components/homepage/SocialLinksSection'));
 
 // Helper functions for data fetching
 async function getArticles() {
