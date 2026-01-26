@@ -20,10 +20,12 @@ export default function CategoryCard({ category, index }) {
       {/* Ubah tinggi dari h-96 menjadi h-80 atau sesuai selera */}
       <Link href={category.href} className="block relative h-80 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-gray-200">
         {category.imageUrl ? (
-          <img
+          <Image
             src={category.imageUrl}
             alt={`Koleksi ${category.name}`}
-            className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+            fill
+            className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
           <div className="w-full h-full bg-linear-to-br from-pink-200 to-pink-100 flex items-center justify-center">

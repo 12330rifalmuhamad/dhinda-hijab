@@ -121,15 +121,13 @@ export default async function HomePage() {
               return <OfflineStoreSection section={section} />;
             case 'BANNER':
               return (
-                <div className="w-full mb-0">
+                <div className="w-full mb-0 relative aspect-[4/3] md:aspect-[3/1]">
                   <Image
                     src={section.content?.imageUrl}
                     alt={section.title || "Banner"}
-                    width={0}
-                    height={0}
+                    fill
                     sizes="100vw"
-                    className="w-full h-auto"
-                    unoptimized={true} // Safe fallback for external URLs
+                    className="object-cover"
                   />
                 </div>
               );
