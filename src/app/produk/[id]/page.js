@@ -5,6 +5,18 @@ import Footer from '@/components/Footer';
 import ProductView from '@/components/ProductView';
 
 // Halaman ini sekarang adalah async Server Component
+export const revalidate = 60;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const products = await prisma.product.findMany({
+    select: { id: true },
+  });
+
+  return products.map((product) => ({
+    id: product.id,
+  }));
+}
 export default async function ProductDetailPage({ params }) {
   const { id } = await params; // Ambil ID dari params
 
