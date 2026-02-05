@@ -71,6 +71,7 @@ export default function ProductCard({ product, index }) {
               fill
               className="object-cover z-0 transition-transform duration-700 group-hover:scale-105"
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+              priority={index < 4}
             />
           )}
 

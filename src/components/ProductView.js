@@ -74,6 +74,7 @@ export default function ProductView({ product }) {
               <ImageMagnifier
                 src={currentImage}
                 alt={product.name}
+                priority={true}
               />
             )}
           </div>

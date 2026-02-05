@@ -10,7 +10,8 @@ export default function ImageMagnifier({
     height,
     magnifierHeight = 150,
     magnifierWidth = 150,
-    zoomLevel = 2
+    zoomLevel = 2,
+    priority = false
 }) {
     const [showMagnifier, setShowMagnifier] = useState(false);
     const [xy, setXY] = useState([0, 0]);
@@ -43,7 +44,7 @@ export default function ImageMagnifier({
                 alt={alt}
                 fill
                 className="object-cover"
-                priority
+                priority={priority}
             />
 
             {showMagnifier && (
