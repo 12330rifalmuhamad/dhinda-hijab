@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { jwtVerify } from "jose";
+import sharp from "sharp";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -39,9 +40,18 @@ export async function POST(request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const mime = file.type || "application/octet-stream";
+
+    // Auto-compress image using sharp
+    const compressedBuffer = await sharp(buffer)
+      .resize(1200, null, { // Resize to max width 1200px, keeping aspect ratio
+        withoutEnlargement: true, // Do not enlarge if image is smaller
+      })
+      .webp({ quality: 80 }) // Convert to webp with 80% quality
+      .toBuffer();
+
+    const mime = "image/webp";
     const encoding = "base64";
-    const base64Data = buffer.toString(encoding);
+    const base64Data = compressedBuffer.toString(encoding);
     const fileUri = "data:" + mime + ";" + encoding + "," + base64Data;
 
     const result = await new Promise((resolve, reject) => {
