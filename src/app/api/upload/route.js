@@ -41,11 +41,8 @@ export async function POST(request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // Auto-compress image using sharp
+    // Convert image to WebP using sharp
     const compressedBuffer = await sharp(buffer)
-      .resize(1200, null, { // Resize to max width 1200px, keeping aspect ratio
-        withoutEnlargement: true, // Do not enlarge if image is smaller
-      })
       .webp({ quality: 80 }) // Convert to webp with 80% quality
       .toBuffer();
 
