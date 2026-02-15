@@ -7,8 +7,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], weight: ["400", "700", "900"] });
 
 export const metadata = {
-  title: "Dhinda Hijab Official",
-  description: "Modest Fashion for the modern soul.",
+  title: "Dhinda Hijab",
+  description: "Made To Move With You.",
 };
 
 export default function RootLayout({ children }) {
