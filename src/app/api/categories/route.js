@@ -55,7 +55,7 @@ export async function POST(request) {
     return NextResponse.json(category, { status: 201 });
   } catch (error) {
     console.error("Error creating category:", error);
-    
+
     if (error.code === 'P2002') {
       return NextResponse.json(
         { message: "Kategori dengan nama ini sudah ada." },

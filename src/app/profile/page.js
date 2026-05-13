@@ -1,271 +1,251 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { User, LogOut, Package, Ticket } from "lucide-react";
-import Link from "next/link";
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { Package, Clock, CheckCircle, XCircle, Truck, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ProfilePage() {
-    const { data: session, status, update: updateSession } = useSession();
-    const router = useRouter();
-    const [userProfile, setUserProfile] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSaving, setIsSaving] = useState(false);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [trackingData, setTrackingData] = useState(null);
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
+  const [isLoadingTracking, setIsLoadingTracking] = useState(false);
 
-    // Form State
-    const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        gender: '',
-        birthDate: ''
-    });
-
-    useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        } else if (status === "authenticated") {
-            fetchProfile();
-        }
-    }, [status, router]);
-
-    const fetchProfile = async () => {
-        try {
-            const res = await fetch('/api/user/profile');
-            const data = await res.json();
-            if (res.ok) {
-                setUserProfile(data);
-                setFormData({
-                    name: data.name || '',
-                    phone: data.phone || '',
-                    gender: data.gender || '',
-                    birthDate: data.birthDate ? new Date(data.birthDate).toISOString().split('T')[0] : ''
-                });
-            }
-        } catch (error) {
-            console.error("Failed to fetch profile", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSaving(true);
-        try {
-            const res = await fetch('/api/user/profile', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            if (res.ok) {
-                const updated = await res.json();
-                setUserProfile(prev => ({ ...prev, ...updated.user }));
-                setIsEditing(false);
-                // Try to update session name if changed
-                if (session?.user?.name !== formData.name) {
-                    await updateSession({ ...session, user: { ...session.user, name: formData.name } });
-                }
-                alert("Biodata berhasil diperbarui!");
-            } else {
-                alert("Gagal memperbarui biodata");
-            }
-        } catch (error) {
-            console.error(error);
-            alert("Terjadi kesalahan");
-        } finally {
-            setIsSaving(false);
-        }
-    };
-
-    if (status === "loading" || isLoading) {
-        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login'); // Pastikan Anda memiliki halaman login, atau ganti dengan rute auth Anda
+    } else if (status === 'authenticated') {
+      fetchUserOrders();
     }
+  }, [status, router]);
 
-    if (!session) return null;
+  const fetchUserOrders = async () => {
+    try {
+      const response = await fetch('/api/user/orders');
+      if (response.ok) {
+        const data = await response.json();
+        setOrders(data);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil pesanan:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
+      case 'PAID': return 'bg-blue-100 text-blue-800';
+      case 'SHIPPED': return 'bg-purple-100 text-purple-800';
+      case 'DELIVERED': return 'bg-green-100 text-green-800';
+      case 'CANCELLED': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getPaymentStatusBadge = (status) => {
+    switch (status) {
+      case 'success':
+        return <span className="flex items-center gap-1 text-green-600 text-sm"><CheckCircle size={16} /> Berhasil</span>;
+      case 'pending':
+        return <span className="flex items-center gap-1 text-yellow-600 text-sm"><Clock size={16} /> Menunggu Pembayaran</span>;
+      case 'failed': case 'expire': case 'cancel':
+        return <span className="flex items-center gap-1 text-red-600 text-sm"><XCircle size={16} /> Gagal / Kadaluarsa</span>;
+      default:
+        return <span className="text-gray-500 text-sm capitalize">{status}</span>;
+    }
+  };
+
+  const handleTrackPackage = async (trackingNumber, courier) => {
+    if (!trackingNumber) return;
+    setIsTrackingModalOpen(true);
+    setIsLoadingTracking(true);
+    setTrackingData(null);
+    try {
+      // courier is usually saved in lower case for biteship (e.g. jne, sicepat)
+      const parsedCourier = courier ? courier.toLowerCase().replace(/[^a-z0-9]/g, '') : 'jne';
+      const res = await fetch(`/api/biteship-tracking?waybill_id=${trackingNumber}&courier=${parsedCourier}`);
+      if (res.ok) {
+        const data = await res.json();
+        setTrackingData(data);
+      } else {
+        setTrackingData({ error: 'Gagal melacak resi.' });
+      }
+    } catch (error) {
+      setTrackingData({ error: 'Terjadi kesalahan.' });
+    } finally {
+      setIsLoadingTracking(false);
+    }
+  };
+
+  if (status === 'loading' || isLoading) {
     return (
-        <div className="min-h-screen bg-gray-50 pt-32 pb-12">
-            <div className="container mx-auto px-4 max-w-4xl">
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    {/* Header */}
-                    <div className="bg-[#fff8f8] p-8 border-b border-gray-100 flex flex-col md:flex-row items-center gap-6">
-                        <div className="w-24 h-24 rounded-full bg-[#dca5ad]/20 flex items-center justify-center text-[#dca5ad] overflow-hidden">
-                            {session.user.image ? (
-                                <Image src={session.user.image} alt={session.user.name} width={96} height={96} className="w-full h-full object-cover" />
-                            ) : (
-                                <User size={40} />
-                            )}
-                        </div>
-                        <div className="text-center md:text-left">
-                            <h1 className="text-2xl font-serif text-[#4a4042] mb-1">{userProfile?.name || session.user.name}</h1>
-                            <p className="text-gray-500">{userProfile?.email || session.user.email}</p>
-                            <span className="inline-block mt-2 bg-[#dca5ad]/10 text-[#dca5ad] text-xs px-3 py-1 rounded-full uppercase tracking-widest font-bold">
-                                {userProfile?.role || session.user.role || 'Customer'}
-                            </span>
-                        </div>
-                        <div className="md:ml-auto">
-                            <button
-                                onClick={() => signOut({ callbackUrl: '/' })}
-                                className="flex items-center gap-2 text-red-500 hover:text-red-700 transition-colors px-4 py-2 border border-red-100 rounded-lg hover:bg-red-50"
-                            >
-                                <LogOut size={18} />
-                                Logout
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Biodata Card */}
-                            <div className="border border-gray-100 rounded-xl p-6 hover:shadow-md transition-shadow bg-white">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-purple-50 text-purple-500 rounded-lg flex items-center justify-center">
-                                            <User size={20} />
-                                        </div>
-                                        <h3 className="font-serif text-lg text-gray-800">Biodata Diri</h3>
-                                    </div>
-                                    {!isEditing && (
-                                        <button
-                                            onClick={() => setIsEditing(true)}
-                                            className="text-sm text-purple-500 hover:text-purple-600 font-medium"
-                                        >
-                                            Edit
-                                        </button>
-                                    )}
-                                </div>
-
-                                {isEditing ? (
-                                    <form onSubmit={handleSubmit} className="space-y-4">
-                                        <div>
-                                            <label className="block text-xs text-gray-400 uppercase tracking-wider mb-1">Nama Lengkap</label>
-                                            <input
-                                                name="name"
-                                                value={formData.name}
-                                                onChange={handleInputChange}
-                                                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-purple-200 outline-none"
-                                                required
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs text-gray-400 uppercase tracking-wider mb-1">No. Telepon</label>
-                                            <input
-                                                name="phone"
-                                                value={formData.phone}
-                                                onChange={handleInputChange}
-                                                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-purple-200 outline-none"
-                                                placeholder="Contoh: 08123456789"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs text-gray-400 uppercase tracking-wider mb-1">Jenis Kelamin</label>
-                                            <select
-                                                name="gender"
-                                                value={formData.gender}
-                                                onChange={handleInputChange}
-                                                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-purple-200 outline-none"
-                                            >
-                                                <option value="">Pilih...</option>
-                                                <option value="Laki-laki">Laki-laki</option>
-                                                <option value="Perempuan">Perempuan</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs text-gray-400 uppercase tracking-wider mb-1">Tanggal Lahir</label>
-                                            <input
-                                                type="date"
-                                                name="birthDate"
-                                                value={formData.birthDate}
-                                                onChange={handleInputChange}
-                                                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-purple-200 outline-none"
-                                            />
-                                        </div>
-                                        <div className="flex gap-2 pt-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setIsEditing(false);
-                                                    setFormData({
-                                                        name: userProfile?.name || '',
-                                                        phone: userProfile?.phone || '',
-                                                        gender: userProfile?.gender || '',
-                                                        birthDate: userProfile?.birthDate ? new Date(userProfile.birthDate).toISOString().split('T')[0] : ''
-                                                    });
-                                                }}
-                                                className="flex-1 px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200"
-                                            >
-                                                Batal
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                disabled={isSaving}
-                                                className="flex-1 px-4 py-2 text-sm text-white bg-purple-500 rounded-lg hover:bg-purple-600 disabled:opacity-70"
-                                            >
-                                                {isSaving ? 'Menyimpan...' : 'Simpan'}
-                                            </button>
-                                        </div>
-                                    </form>
-                                ) : (
-                                    <div className="space-y-3 mt-4">
-                                        <div>
-                                            <p className="text-xs text-gray-400 uppercase tracking-wider">Nama Lengkap</p>
-                                            <p className="text-sm font-medium text-gray-700">{userProfile?.name || '-'}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-400 uppercase tracking-wider">Email</p>
-                                            <p className="text-sm font-medium text-gray-700">{userProfile?.email || '-'}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-400 uppercase tracking-wider">No. Telepon</p>
-                                            <p className="text-sm font-medium text-gray-700">{userProfile?.phone || '-'}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-400 uppercase tracking-wider">Jenis Kelamin</p>
-                                            <p className="text-sm font-medium text-gray-700">{userProfile?.gender || '-'}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-gray-400 uppercase tracking-wider">Tanggal Lahir</p>
-                                            <p className="text-sm font-medium text-gray-700">
-                                                {userProfile?.birthDate ? new Date(userProfile.birthDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Vouchers Card */}
-                            <div className="border border-gray-100 rounded-xl p-6 hover:shadow-md transition-shadow cursor-pointer group bg-white">
-                                <div className="w-12 h-12 bg-[#dca5ad]/20 text-[#dca5ad] rounded-lg flex items-center justify-center mb-4 group-hover:bg-[#dca5ad]/30 transition-colors">
-                                    <Ticket size={24} />
-                                </div>
-                                <h3 className="font-serif text-lg text-gray-800 mb-2">Voucher Saya</h3>
-                                <p className="text-sm text-gray-500 mb-4">Klaim dan gunakan voucher belanja Anda.</p>
-
-                                {/* Placeholder Voucher List - could be dynamic later */}
-                                <div className="space-y-3">
-                                    <div className="bg-gray-50 border border-gray-100 rounded-lg p-4 text-center">
-                                        <p className="text-sm text-gray-500">Lihat semua voucher yang tersedia di halaman Voucher Center.</p>
-                                    </div>
-                                </div>
-
-                                <div className="mt-6 pt-4 border-t border-gray-100">
-                                    <Link href="/profile/vouchers" className="text-[#dca5ad] text-sm font-medium hover:underline">Lihat Semua Voucher &rarr;</Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center">Memuat data profil...</div>
+        <Footer />
+      </>
     );
+  }
+
+  if (!session) return null;
+
+  return (
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-gray-50 py-12">
+        <div className="container mx-auto px-4 max-w-5xl">
+
+          {/* Header Profil */}
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-8 flex items-center gap-6">
+            <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-2xl font-bold">
+              {session.user?.name ? session.user.name.charAt(0).toUpperCase() : 'U'}
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">{session.user?.name || 'Pengguna'}</h1>
+              <p className="text-gray-500">{session.user?.email}</p>
+            </div>
+          </div>
+
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Riwayat Pesanan Saya</h2>
+
+          {orders.length === 0 ? (
+            <div className="bg-white p-12 rounded-lg shadow-sm border border-gray-100 text-center">
+              <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Belum ada pesanan</h3>
+              <p className="text-gray-500 mb-6">Anda belum pernah melakukan pemesanan di toko kami.</p>
+              <Link href="/" className="inline-block bg-gray-900 text-white px-6 py-2 rounded-md hover:bg-gray-800 transition-colors">
+                Mulai Belanja
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {orders.map((order) => (
+                <div key={order.id} className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+
+                  {/* Header Card */}
+                  <div className="bg-gray-50 px-6 py-4 border-b flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">ID Pesanan: <span className="font-mono text-gray-900">#{order.id.substring(order.id.length - 8).toUpperCase()}</span></p>
+                      <p className="text-xs text-gray-400 mt-1">{new Date(order.createdAt).toLocaleString('id-ID')}</p>
+                    </div>
+                    <div className="flex flex-col md:items-end gap-1">
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                        {order.status}
+                      </span>
+                      {order.trackingNumber && (
+                        <button
+                          onClick={() => handleTrackPackage(order.trackingNumber, order.courier)}
+                          className="flex items-center gap-1 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-full mt-1 transition-colors"
+                        >
+                          <Truck size={14} /> Lacak: {order.trackingNumber}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Body Card */}
+                  <div className="p-6">
+                    <div className="flex flex-col md:flex-row justify-between gap-6">
+
+                      {/* Items */}
+                      <div className="flex-1">
+                        <h4 className="text-sm font-medium text-gray-500 mb-3">Produk</h4>
+                        <div className="space-y-3">
+                          {order.items.map((item) => (
+                            <div key={item.id} className="flex gap-3 items-center">
+                              <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden relative flex-shrink-0">
+                                {item.product.images?.[0]?.url && (
+                                  <img src={item.product.images[0].url} alt={item.product.name} className="w-full h-full object-cover" />
+                                )}
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">{item.product.name}</p>
+                                <p className="text-xs text-gray-500">{item.quantity} x Barang</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Summary */}
+                      <div className="w-full md:w-64 flex flex-col justify-between border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-6">
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-500 mb-1">Total Belanja</h4>
+                          <p className="text-lg font-bold text-gray-900">Rp {order.totalAmount.toLocaleString('id-ID')}</p>
+                        </div>
+
+                        <div className="mt-4">
+                          <h4 className="text-sm font-medium text-gray-500 mb-1">Status Pembayaran</h4>
+                          {getPaymentStatusBadge(order.paymentStatus)}
+
+                          {order.paymentStatus === 'pending' && order.snapRedirectUrl && (
+                            <a
+                              href={order.snapRedirectUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded"
+                            >
+                              Selesaikan Pembayaran <ExternalLink size={12} />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Tracking Modal */}
+      {isTrackingModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg w-full max-w-md max-h-[80vh] flex flex-col">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h3 className="font-bold text-lg flex items-center gap-2"><Truck size={20} /> Lacak Paket</h3>
+              <button onClick={() => setIsTrackingModalOpen(false)} className="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <div className="p-4 overflow-y-auto flex-1">
+              {isLoadingTracking ? (
+                <div className="text-center py-8 text-gray-500">Mencari data resi...</div>
+              ) : trackingData?.error ? (
+                <div className="text-center py-8 text-red-500">{trackingData.error}</div>
+              ) : trackingData?.history ? (
+                <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
+                  {trackingData.history.map((hist, idx) => (
+                    <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                      <div className="flex items-center justify-center w-4 h-4 rounded-full border border-white bg-blue-500 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 ml-[2px] md:ml-0"></div>
+                      <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-3 rounded border border-slate-200 bg-white shadow-sm ml-4 md:ml-0">
+                        <div className="flex items-center justify-between space-x-2 mb-1">
+                          <div className="font-bold text-slate-900 text-xs">{hist.status}</div>
+                          <time className="font-mono text-[10px] text-slate-500">{new Date(hist.updated_at).toLocaleString('id-ID')}</time>
+                        </div>
+                        <div className="text-slate-500 text-xs">{hist.note}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">Riwayat pelacakan belum tersedia.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Footer />
+    </>
+  );
 }

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
-    const { destination_area_id } = await request.json();
+    const { destination_area_id, weight = 200 } = await request.json();
 
     if (!destination_area_id) {
       return NextResponse.json({ message: "ID area tujuan diperlukan" }, { status: 400 });
@@ -16,18 +16,18 @@ export async function POST(request) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "origin_area_id": "IDN.JW.KR.TJT.SKH", // Contoh ID Area Karawang (asal)
+        "origin_area_id": process.env.BITESHIP_ORIGIN_AREA_ID, // Mengambil ID area gudang asal dari .env
         "destination_area_id": destination_area_id,
-        "couriers": "jne,sicepat,jnt", // Kurir yang ingin dicek
+        "couriers": "jne,sicepat,jnt", // Harus dikirimkan, karena Biteship wajib menerima parameter ini
         "items": [
           {
-            "name": "Hijab",
+            "name": "Paket Belanja",
             "description": "Produk fashion",
             "value": 50000,
             "length": 20,
             "width": 15,
             "height": 5,
-            "weight": 200 // Berat dalam gram
+            "weight": weight // Berat dinamis dalam gram
           }
         ]
       })
@@ -36,7 +36,7 @@ export async function POST(request) {
     const data = await response.json();
 
     if (!response.ok || !data.success) {
-      console.error("Biteship API Error:", data);
+      console.error("Biteship API Error:", data.error || data);
       throw new Error(data.error || 'Gagal mengambil data ongkir dari Biteship');
     }
 

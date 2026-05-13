@@ -27,11 +27,14 @@ export const CartProvider = ({ children }) => {
   const addToCart = (product, quantity = 1) => {
     setIsLoading(true);
     
+    // Gunakan cartItemId jika ada (untuk varian), jika tidak gunakan id
+    const uniqueId = product.cartItemId || product.id;
+    
     setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
+      const existingItem = prevItems.find(item => (item.cartItemId || item.id) === uniqueId);
       if (existingItem) {
         const updatedItems = prevItems.map(item =>
-          item.id === product.id 
+          (item.cartItemId || item.id) === uniqueId 
             ? { ...item, quantity: item.quantity + quantity } 
             : item
         );
@@ -40,7 +43,7 @@ export const CartProvider = ({ children }) => {
       
       const imageUrl = product.images && product.images.length > 0 
         ? product.images[0].url 
-        : '/img/placeholder.png';
+        : (product.imageUrl || '/img/placeholder.png');
       
       return [...prevItems, { 
         ...product, 
@@ -56,8 +59,8 @@ export const CartProvider = ({ children }) => {
     }, 500);
   };
 
-  const removeFromCart = (productId) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+  const removeFromCart = (uniqueId) => {
+    setCartItems(prevItems => prevItems.filter(item => (item.cartItemId || item.id) !== uniqueId));
   };
 
   const updateQuantity = (productId, newQuantity) => {

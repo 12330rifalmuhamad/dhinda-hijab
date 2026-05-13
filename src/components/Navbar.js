@@ -114,6 +114,19 @@ export default function Navbar({ categories = [] }) {
                   )}
                   {session?.user && <span className="hidden md:inline text-xs font-medium uppercase tracking-wider">{session.user.name?.split(' ')[0]}</span>}
                 </button>
+
+                {/* Cart Icon */}
+                <Link
+                  href="/keranjang"
+                  className="p-2 text-[#4a4042] hover:text-[#dca5ad] transition-colors relative"
+                >
+                  <ShoppingBag size={20} strokeWidth={1.5} />
+                  {totalItems > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[9px] font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-[#dca5ad] rounded-full min-w-[16px] h-[16px]">
+                      {totalItems}
+                    </span>
+                  )}
+                </Link>
               </div>
             </div>
 

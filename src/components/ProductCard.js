@@ -3,9 +3,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Star, Flame, MapPin } from 'lucide-react';
+import { Star, Flame, MapPin, Heart } from 'lucide-react';
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 
 export default function ProductCard({ product, index }) {
+  const { data: session } = useSession();
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -13,6 +18,30 @@ export default function ProductCard({ product, index }) {
       y: 0,
       transition: { duration: 0.5, delay: index * 0.1 },
     },
+  };
+
+  const handleWishlist = async (e) => {
+    e.preventDefault(); // Prevent navigating to product detail
+    e.stopPropagation();
+    
+    if (!session) {
+      alert("Silakan login terlebih dahulu untuk menyimpan ke wishlist");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: product.id })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setIsWishlisted(data.isWishlisted);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // Helper to check if url is video
@@ -36,7 +65,7 @@ export default function ProductCard({ product, index }) {
       whileInView="visible"
       viewport={{ once: true }}
     >
-      <Link href={`/produk/${product.id}`} className="block h-full flex flex-col">
+      <Link href={`/produk/${product.id}`} className="block h-full flex flex-col relative">
         {/* Media Container */}
         <div className="relative w-full aspect-[4/5] overflow-hidden bg-gray-50">
           {/* Overlays - Top Left - Soft & Minimal */}
@@ -49,6 +78,14 @@ export default function ProductCard({ product, index }) {
               </div>
             )}
           </div>
+          
+          {/* Wishlist Button - Top Right */}
+          <button 
+            onClick={handleWishlist}
+            className="absolute top-3 right-3 z-30 p-2 rounded-full bg-white/80 backdrop-blur text-gray-400 hover:text-brand-primary hover:bg-white transition-all shadow-sm"
+          >
+            <Heart size={16} className={isWishlisted ? "fill-brand-primary text-brand-primary" : ""} />
+          </button>
 
           {/* Bottom Overlay - Soft Gradient */}
           <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/40 to-transparent p-3 pt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

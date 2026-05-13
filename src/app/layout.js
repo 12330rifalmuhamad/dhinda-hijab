@@ -20,6 +20,8 @@ export const metadata = {
   description: "Toko Hijab Online Modern dan Berkualitas",
 };
 
+import WhatsAppWidget from "@/components/WhatsAppWidget";
+
 export default async function RootLayout({ children }) {
   // Fetch categories for the Navbar
   let categories = [];
@@ -43,6 +45,7 @@ export default async function RootLayout({ children }) {
             <Navbar categories={categories} />
             {children}
             <Footer />
+            <WhatsAppWidget />
           </CartProvider>
         </AuthProvider>
       </body>
